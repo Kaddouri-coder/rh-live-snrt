@@ -30,8 +30,24 @@ class RessourceModelClass {
     return mapRowToRessource(result.rows[0]);
   }
 
+  // Génère un ID séquentiel du type "res-004" (au lieu d'un timestamp).
+  private async generateNextId(): Promise<string> {
+    const countResult = await pool.query('SELECT COUNT(*)::int AS count FROM ressources_humaines');
+    let n = countResult.rows[0].count + 1;
+    let candidate = `res-${String(n).padStart(3, '0')}`;
+
+    while (true) {
+      const exists = await pool.query('SELECT 1 FROM ressources_humaines WHERE id = $1', [candidate]);
+      if (exists.rows.length === 0) break;
+      n += 1;
+      candidate = `res-${String(n).padStart(3, '0')}`;
+    }
+
+    return candidate;
+  }
+
   public async create(data: Partial<RessourceHumaine>): Promise<RessourceHumaine> {
-    const id = `res-${Date.now()}`;
+    const id = await this.generateNextId();
     const matricule = data.matricule || `M${Math.floor(10000 + Math.random() * 90000)}`;
     const nom = data.nom || 'Sans nom';
     const prenom = data.prenom || 'Sans prénom';

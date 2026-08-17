@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RessourceHumaine, Affectation } from '../types';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, AlertTriangle } from 'lucide-react';
 import { CHAINES_LIST } from '../data/constants';
 import { SearchableSelect } from './SearchableSelect';
 
@@ -8,7 +8,7 @@ interface AddAssignmentModalProps {
   ressources: RessourceHumaine[];
   preselectedResource: RessourceHumaine | null;
   onClose: () => void;
-  onSave: (newAff: Partial<Affectation>) => void;
+  onSave: (newAff: Partial<Affectation>) => Promise<{ success: boolean; error?: string }>;
   defaultStart: string;
   defaultEnd: string;
 }
@@ -32,24 +32,33 @@ export const AddAssignmentModal: React.FC<AddAssignmentModalProps> = ({
   const [lieu, setLieu] = useState<string>('Studio A - Rabat');
   const [dateDebut, setDateDebut] = useState<string>(defaultStart || '2026-08-10T09:00');
   const [dateFin, setDateFin] = useState<string>(defaultEnd || '2026-08-10T14:00');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ressourceId || !emissionNom || !dateDebut || !dateFin) {
       alert('Veuillez remplir les champs obligatoires.');
       return;
     }
 
-    onSave({
+    setErrorMsg(null);
+    setIsSaving(true);
+    const result = await onSave({
       ressourceId,
       emissionNom,
       typeProduction,
       chaine: chaine === 'Toutes les chaînes' ? 'Al Aoula' : chaine,
       lieu,
-      dateDebut: new Date(dateDebut).toISOString(),
-      dateFin: new Date(dateFin).toISOString(),
+      dateDebut: dateDebut.length === 16 ? `${dateDebut}:00` : dateDebut,
+      dateFin: dateFin.length === 16 ? `${dateFin}:00` : dateFin,
       statut: 'Confirmé',
     });
+    setIsSaving(false);
+
+    if (!result.success) {
+      setErrorMsg(result.error || 'Une erreur est survenue.');
+    }
   };
 
   return (
@@ -172,6 +181,13 @@ export const AddAssignmentModal: React.FC<AddAssignmentModalProps> = ({
             </div>
           </div>
 
+          {errorMsg && (
+            <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg p-3 text-xs font-medium">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
           <div className="pt-3 border-t border-slate-200 flex justify-end space-x-2">
             <button
               type="button"
@@ -182,9 +198,10 @@ export const AddAssignmentModal: React.FC<AddAssignmentModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition-colors"
+              disabled={isSaving}
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg shadow transition-colors"
             >
-              Enregistrer l'affectation
+              {isSaving ? 'Enregistrement...' : "Enregistrer l'affectation"}
             </button>
           </div>
         </form>

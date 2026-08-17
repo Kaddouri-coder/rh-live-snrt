@@ -251,7 +251,7 @@ export default function App() {
     }
   };
 
-  const handleSaveAssignment = async (newAffData: Partial<Affectation>) => {
+  const handleSaveAssignment = async (newAffData: Partial<Affectation>): Promise<{ success: boolean; error?: string }> => {
     try {
       const res = await fetch('/api/affectations', {
         method: 'POST',
@@ -265,9 +265,17 @@ export default function App() {
         await fetchAvailability();
         await fetchStats();
         await fetchSyncStatus();
+        return { success: true };
       }
+
+      const errData = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errData.message || 'Impossible de créer cette affectation (conflit ou erreur serveur).',
+      };
     } catch (err) {
       console.error('Erreur sauvegarde affectation:', err);
+      return { success: false, error: 'Erreur réseau : impossible de contacter le serveur.' };
     }
   };
 

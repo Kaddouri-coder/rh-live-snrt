@@ -342,8 +342,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-200 text-xs">
               {filteredRessources.map((res) => {
-                const dayStart = new Date(`${selectedDateStr}T00:00:00.000Z`);
-                const dayEnd = new Date(`${selectedDateStr}T23:59:59.999Z`);
+                const dayStart = new Date(`${selectedDateStr}T00:00:00.000`);
+                const dayEnd = new Date(`${selectedDateStr}T23:59:59.999`);
 
                 const resAffectations = affectations.filter((aff) => {
                   if (aff.ressourceId !== res.id) return false;
@@ -371,10 +371,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                     {hours.map((hour) => {
                       const slotStart = new Date(
-                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:00:00.000Z`
+                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:00:00.000`
                       );
                       const slotEnd = new Date(
-                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:59:59.999Z`
+                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:59:59.999`
                       );
 
                       const matchingAff = resAffectations.find((aff) => {
@@ -465,8 +465,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                     {weekDays.map((day) => {
                       const dayStr = formatDateStr(day);
-                      const dStart = new Date(`${dayStr}T00:00:00.000Z`);
-                      const dEnd = new Date(`${dayStr}T23:59:59.999Z`);
+                      const dStart = new Date(`${dayStr}T00:00:00.000`);
+                      const dEnd = new Date(`${dayStr}T23:59:59.999`);
 
                       const dayAffectations = affectations.filter((aff) => {
                         if (aff.ressourceId !== res.id) return false;
@@ -572,8 +572,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                       {monthDays.map((d) => {
                         const dayStr = formatDateStr(d);
-                        const dStart = new Date(`${dayStr}T00:00:00.000Z`);
-                        const dEnd = new Date(`${dayStr}T23:59:59.999Z`);
+                        const dStart = new Date(`${dayStr}T00:00:00.000`);
+                        const dEnd = new Date(`${dayStr}T23:59:59.999`);
 
                         const matchingAff = affectations.find((aff) => {
                           if (aff.ressourceId !== res.id) return false;
@@ -619,8 +619,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
               {monthDays.map((d) => {
                 const dayStr = formatDateStr(d);
-                const dStart = new Date(`${dayStr}T00:00:00.000Z`);
-                const dEnd = new Date(`${dayStr}T23:59:59.999Z`);
+                const dStart = new Date(`${dayStr}T00:00:00.000`);
+                const dEnd = new Date(`${dayStr}T23:59:59.999`);
 
                 const dayAffectations = affectations.filter((aff) => {
                   const aStart = new Date(aff.dateDebut);
@@ -729,8 +729,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                     {customPeriodDays.map((d) => {
                       const dayStr = formatDateStr(d);
-                      const dStart = new Date(`${dayStr}T00:00:00.000Z`);
-                      const dEnd = new Date(`${dayStr}T23:59:59.999Z`);
+                      const dStart = new Date(`${dayStr}T00:00:00.000`);
+                      const dEnd = new Date(`${dayStr}T23:59:59.999`);
 
                       const matchingAff = affectations.find((aff) => {
                         if (aff.ressourceId !== res.id) return false;

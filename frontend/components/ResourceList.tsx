@@ -58,6 +58,24 @@ export const ResourceList: React.FC<ResourceListProps> = ({
     });
   };
 
+  const handleAffecterClick = (
+    ressource: RessourceHumaine,
+    isDispo: boolean,
+    affectationsConflit: Affectation[]
+  ) => {
+    if (!isDispo && affectationsConflit.length > 0) {
+      const conflit = affectationsConflit[0];
+      const proceed = window.confirm(
+        `⚠️ Attention : ${ressource.prenom} ${ressource.nom} est déjà occupé(e) sur cette période ` +
+        `(conflit avec "${conflit.emissionNom}", ${formatTimeOnly(conflit.dateDebut)} - ${formatTimeOnly(conflit.dateFin)}).\n\n` +
+        `Voulez-vous quand même essayer de créer une nouvelle affectation ? ` +
+        `(le système bloquera l'enregistrement si les horaires se chevauchent réellement)`
+      );
+      if (!proceed) return;
+    }
+    onOpenAddAssignment(ressource);
+  };
+
   if (resultats.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
@@ -259,7 +277,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                     </button>
 
                     <button
-                      onClick={() => onOpenAddAssignment(ressource)}
+                      onClick={() => handleAffecterClick(ressource, isDispo, affectationsConflit)}
                       className="inline-flex items-center space-x-1 text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded border border-emerald-200 transition-colors text-xs"
                     >
                       <PlusCircle className="w-3.5 h-3.5" />
@@ -362,7 +380,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                           Fiche
                         </button>
                         <button
-                          onClick={() => onOpenAddAssignment(ressource)}
+                          onClick={() => handleAffecterClick(ressource, isDispo, affectationsConflit)}
                           className="text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200 text-[11px]"
                         >
                           + Affecter
