@@ -1,19 +1,17 @@
 import React from 'react';
 import { Affectation, RessourceHumaine } from '../types';
-import { X, Tv, Clock, MapPin, Trash2 } from 'lucide-react';
+import { X, Tv, Clock, MapPin } from 'lucide-react';
 
 interface AssignmentDetailsModalProps {
   affectation: Affectation | null;
   ressource: RessourceHumaine | null;
   onClose: () => void;
-  onDeleteAffectation: (id: string) => void;
 }
 
 export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
   affectation,
   ressource,
   onClose,
-  onDeleteAffectation,
 }) => {
   if (!affectation) return null;
 
@@ -104,20 +102,7 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
           </div>
         </div>
 
-        <div className="bg-slate-50 p-4 border-t border-slate-200 flex items-center justify-between">
-          <button
-            onClick={() => {
-              if (confirm('Voulez-vous vraiment annuler cette affectation mPlanner V2 ?')) {
-                onDeleteAffectation(affectation.id);
-                onClose();
-              }
-            }}
-            className="inline-flex items-center space-x-1.5 text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg border border-rose-200 text-xs font-semibold transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Annuler l'affectation</span>
-          </button>
-
+        <div className="bg-slate-50 p-4 border-t border-slate-200 flex items-center justify-end">
           <button
             onClick={onClose}
             className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors"

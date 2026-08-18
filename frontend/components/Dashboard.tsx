@@ -17,7 +17,6 @@ interface DashboardProps {
   stats: StatsGlobales | null;
   filtres: FiltresRecherche;
   onNavigateToRecherche: (filtresPreset?: Partial<FiltresRecherche>) => void;
-  onOpenAddAssignment: () => void;
   dateDebutFormatted: string;
   dateFinFormatted: string;
 }

@@ -6,10 +6,10 @@ import { ResourceList } from './components/ResourceList';
 import { CalendarView } from './components/CalendarView';
 import { ResourceProfileModal } from './components/ResourceProfileModal';
 import { AssignmentDetailsModal } from './components/AssignmentDetailsModal';
-import { AddAssignmentModal } from './components/AddAssignmentModal';
-import { AddResourceModal } from './components/AddResourceModal';
 import { MPlannerSyncModal } from './components/MPlannerSyncModal';
 import { ExportReportModal } from './components/ExportReportModal';
+import { LoginPage } from './components/LoginPage';
+import { AdminPanel } from './components/AdminPanel';
 
 import {
   FiltresRecherche,
@@ -18,9 +18,49 @@ import {
   Affectation,
   SyncInfo,
   StatsGlobales,
+  AppUser,
 } from './types';
 
+const TOKEN_KEY = 'mplanner_token';
+const USER_KEY = 'mplanner_user';
+
 export default function App() {
+  // --- Authentification ---
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  });
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+
+  const handleLoginSuccess = (newToken: string, user: AppUser) => {
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    setToken(newToken);
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setToken(null);
+    setCurrentUser(null);
+  };
+
+  // Wrapper fetch qui ajoute automatiquement le token d'authentification,
+  // et déconnecte automatiquement si la session est invalide/expirée (401).
+  const apiFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    const headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) {
+      handleLogout();
+    }
+    return res;
+  };
+
   const [activeTab, setActiveTab] = useState<'dashboard' | 'recherche' | 'calendrier' | 'sync'>('dashboard');
 
   const [filtres, setFiltres] = useState<FiltresRecherche>({
@@ -59,15 +99,12 @@ export default function App() {
     ressource: RessourceHumaine | null;
   } | null>(null);
 
-  const [addAssignmentTargetResource, setAddAssignmentTargetResource] = useState<RessourceHumaine | null>(null);
-  const [isAddAssignmentOpen, setIsAddAssignmentOpen] = useState<boolean>(false);
-  const [isAddResourceOpen, setIsAddResourceOpen] = useState<boolean>(false);
   const [isExportReportOpen, setIsExportReportOpen] = useState<boolean>(false);
 
   const fetchAvailability = async (currentFiltres = filtres) => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/disponibilite', {
+      const res = await apiFetch('/api/disponibilite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentFiltres),
@@ -89,7 +126,7 @@ export default function App() {
   const fetchStats = async () => {
     try {
       const query = `?debut=${encodeURIComponent(filtres.dateDebut)}&fin=${encodeURIComponent(filtres.dateFin)}`;
-      const res = await fetch(`/api/stats${query}`);
+      const res = await apiFetch(`/api/stats${query}`);
       if (res.ok) {
         const data = await res.json();
         setStatsGlobales(data);
@@ -101,7 +138,7 @@ export default function App() {
 
   const fetchSyncStatus = async () => {
     try {
-      const res = await fetch('/api/sync/status');
+      const res = await apiFetch('/api/sync/status');
       if (res.ok) {
         const data = await res.json();
         setSyncInfo(data);
@@ -113,7 +150,7 @@ export default function App() {
 
   const fetchFonctions = async () => {
     try {
-      const res = await fetch('/api/fonctions');
+      const res = await apiFetch('/api/fonctions');
       if (res.ok) {
         const data = await res.json();
         setFonctionsAffichees(data.fonctionsAffichees || []);
@@ -126,7 +163,7 @@ export default function App() {
   const handleUpdateFonctionsAffichees = async (newFonctions: string[]) => {
     try {
       setFonctionsAffichees(newFonctions);
-      await fetch('/api/fonctions', {
+      await apiFetch('/api/fonctions', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fonctions: newFonctions }),
@@ -139,12 +176,12 @@ export default function App() {
 
   const fetchAllData = async () => {
     try {
-      const resRes = await fetch('/api/ressources');
+      const resRes = await apiFetch('/api/ressources');
       if (resRes.ok) {
         const ressourcesData = await resRes.json();
         setAllRessources(ressourcesData);
       }
-      const resAff = await fetch('/api/affectations');
+      const resAff = await apiFetch('/api/affectations');
       if (resAff.ok) {
         const affectationsData = await resAff.json();
         setAllAffectations(affectationsData);
@@ -155,28 +192,10 @@ export default function App() {
     }
   };
 
-  const handleSaveResource = async (resourceData: Partial<RessourceHumaine>) => {
-    try {
-      const res = await fetch('/api/ressources', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resourceData),
-      });
-      if (res.ok) {
-        await fetchAllData();
-        await fetchAvailability();
-        await fetchStats();
-        await fetchSyncStatus();
-      }
-    } catch (err) {
-      console.error('Erreur creation ressource:', err);
-    }
-  };
-
   const handleTriggerSync = async () => {
     setIsSyncing(true);
     try {
-      const res = await fetch('/api/sync/trigger', { method: 'POST' });
+      const res = await apiFetch('/api/sync/trigger', { method: 'POST' });
       if (res.ok) {
         const newSyncData = await res.json();
         setSyncInfo(newSyncData);
@@ -192,13 +211,15 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (!token) return;
     fetchSyncStatus();
     fetchAllData();
     fetchAvailability();
     fetchStats();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
+    if (!token) return;
     fetchStats();
   }, [filtres.dateDebut, filtres.dateFin]);
 
@@ -238,7 +259,7 @@ export default function App() {
 
   const handleOpenResourceProfile = async (ressource: RessourceHumaine) => {
     try {
-      const res = await fetch(`/api/ressources/${ressource.id}`);
+      const res = await apiFetch(`/api/ressources/${ressource.id}`);
       if (res.ok) {
         const data = await res.json();
         setSelectedProfile({
@@ -248,50 +269,6 @@ export default function App() {
       }
     } catch (err) {
       console.error('Erreur fiche ressource:', err);
-    }
-  };
-
-  const handleSaveAssignment = async (newAffData: Partial<Affectation>): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const res = await fetch('/api/affectations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newAffData),
-      });
-
-      if (res.ok) {
-        setIsAddAssignmentOpen(false);
-        setAddAssignmentTargetResource(null);
-        await fetchAvailability();
-        await fetchStats();
-        await fetchSyncStatus();
-        return { success: true };
-      }
-
-      const errData = await res.json().catch(() => ({}));
-      return {
-        success: false,
-        error: errData.message || 'Impossible de créer cette affectation (conflit ou erreur serveur).',
-      };
-    } catch (err) {
-      console.error('Erreur sauvegarde affectation:', err);
-      return { success: false, error: 'Erreur réseau : impossible de contacter le serveur.' };
-    }
-  };
-
-  const handleDeleteAssignment = async (affectationId: string) => {
-    try {
-      const res = await fetch(`/api/affectations/${affectationId}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setSelectedAffectation(null);
-        await fetchAvailability();
-        await fetchStats();
-        await fetchSyncStatus();
-      }
-    } catch (err) {
-      console.error('Erreur suppression affectation:', err);
     }
   };
 
@@ -308,6 +285,11 @@ export default function App() {
   const nbDisponibles = resultatsDispo.filter((r) => r.etat === 'Disponible').length;
   const nbOccupees = resultatsDispo.filter((r) => r.etat === 'Occupée').length;
 
+  // --- Page de connexion (si non authentifié) ---
+  if (!token || !currentUser) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col selection:bg-emerald-500 selection:text-white">
       <Header
@@ -317,7 +299,9 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenExportModal={() => setIsExportReportOpen(true)}
-        onOpenAddResourceModal={() => setIsAddResourceOpen(true)}
+        currentUser={currentUser}
+        onOpenAdminPanel={() => setIsAdminPanelOpen(true)}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -331,10 +315,6 @@ export default function App() {
               } else {
                 setActiveTab('recherche');
               }
-            }}
-            onOpenAddAssignment={() => {
-              setAddAssignmentTargetResource(null);
-              setIsAddAssignmentOpen(true);
             }}
             dateDebutFormatted={formatDateDisplay(filtres.dateDebut)}
             dateFinFormatted={formatDateDisplay(filtres.dateFin)}
@@ -368,10 +348,6 @@ export default function App() {
                 onSelectAffectation={(aff) => {
                   const res = allRessources.find((r) => r.id === aff.ressourceId) || null;
                   setSelectedAffectation({ affectation: aff, ressource: res });
-                }}
-                onOpenAddAssignment={(res) => {
-                  setAddAssignmentTargetResource(res);
-                  setIsAddAssignmentOpen(true);
                 }}
                 dateHeureDebut={filtres.dateDebut}
                 dateHeureFin={filtres.dateFin}
@@ -430,18 +406,6 @@ export default function App() {
           affectation={selectedAffectation.affectation}
           ressource={selectedAffectation.ressource}
           onClose={() => setSelectedAffectation(null)}
-          onDeleteAffectation={handleDeleteAssignment}
-        />
-      )}
-
-      {isAddAssignmentOpen && (
-        <AddAssignmentModal
-          ressources={allRessources}
-          preselectedResource={addAssignmentTargetResource}
-          onClose={() => setIsAddAssignmentOpen(false)}
-          onSave={handleSaveAssignment}
-          defaultStart={filtres.dateDebut}
-          defaultEnd={filtres.dateFin}
         />
       )}
 
@@ -454,11 +418,9 @@ export default function App() {
         />
       )}
 
-      <AddResourceModal
-        isOpen={isAddResourceOpen}
-        onClose={() => setIsAddResourceOpen(false)}
-        onSave={handleSaveResource}
-      />
+      {isAdminPanelOpen && (
+        <AdminPanel token={token} currentUser={currentUser} onClose={() => setIsAdminPanelOpen(false)} />
+      )}
     </div>
   );
 }

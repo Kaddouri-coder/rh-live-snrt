@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+/* Animation "equalizer" pour la decoration waveform de la page de connexion */
+@keyframes waveform-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.waveform-bar {
+  animation: waveform-pulse 1.4s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+/* Animation "flottante" pour le logo anime de la page de connexion */
+/* Animation "rotation continue" pour le logo anime de la page de connexion */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.logo-float {
+  animation: logo-spin 10s linear infinite;
+}
+
+/* Impression : le rapport est rendu hors de #root via un portail React (voir
+   ExportReportModal.tsx). Il suffit donc de masquer #root à l'impression ;
+   le rapport (déjà "hidden print:block") s'affiche alors seul. */
+@media print {
+  #root {
+    display: none !important;
+  }
+}

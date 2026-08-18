@@ -12,14 +12,12 @@ import {
   ChevronUp,
   Briefcase,
   AlertTriangle,
-  PlusCircle,
 } from 'lucide-react';
 
 interface ResourceListProps {
   resultats: DisponibiliteResult[];
   onSelectResource: (ressource: RessourceHumaine) => void;
   onSelectAffectation: (affectation: Affectation) => void;
-  onOpenAddAssignment: (ressource: RessourceHumaine) => void;
   dateHeureDebut: string;
   dateHeureFin: string;
 }
@@ -28,7 +26,6 @@ export const ResourceList: React.FC<ResourceListProps> = ({
   resultats,
   onSelectResource,
   onSelectAffectation,
-  onOpenAddAssignment,
   dateHeureDebut,
   dateHeureFin,
 }) => {
@@ -56,24 +53,6 @@ export const ResourceList: React.FC<ResourceListProps> = ({
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
-
-  const handleAffecterClick = (
-    ressource: RessourceHumaine,
-    isDispo: boolean,
-    affectationsConflit: Affectation[]
-  ) => {
-    if (!isDispo && affectationsConflit.length > 0) {
-      const conflit = affectationsConflit[0];
-      const proceed = window.confirm(
-        `⚠️ Attention : ${ressource.prenom} ${ressource.nom} est déjà occupé(e) sur cette période ` +
-        `(conflit avec "${conflit.emissionNom}", ${formatTimeOnly(conflit.dateDebut)} - ${formatTimeOnly(conflit.dateFin)}).\n\n` +
-        `Voulez-vous quand même essayer de créer une nouvelle affectation ? ` +
-        `(le système bloquera l'enregistrement si les horaires se chevauchent réellement)`
-      );
-      if (!proceed) return;
-    }
-    onOpenAddAssignment(ressource);
   };
 
   if (resultats.length === 0) {
@@ -275,14 +254,6 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                       <User className="w-3.5 h-3.5 text-slate-400" />
                       <span>Fiche ressource</span>
                     </button>
-
-                    <button
-                      onClick={() => handleAffecterClick(ressource, isDispo, affectationsConflit)}
-                      className="inline-flex items-center space-x-1 text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded border border-emerald-200 transition-colors text-xs"
-                    >
-                      <PlusCircle className="w-3.5 h-3.5" />
-                      <span>Affecter</span>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -378,12 +349,6 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                           className="text-slate-600 hover:text-emerald-600 font-medium text-xs underline"
                         >
                           Fiche
-                        </button>
-                        <button
-                          onClick={() => handleAffecterClick(ressource, isDispo, affectationsConflit)}
-                          className="text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200 text-[11px]"
-                        >
-                          + Affecter
                         </button>
                       </td>
                     </tr>

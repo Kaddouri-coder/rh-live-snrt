@@ -1,6 +1,6 @@
 import React from 'react';
-import { RefreshCw, Calendar, LayoutDashboard, Search, FileText, UserPlus } from 'lucide-react';
-import { SyncInfo } from '../types';
+import { RefreshCw, Calendar, LayoutDashboard, Search, FileText, ShieldCheck, LogOut } from 'lucide-react';
+import { SyncInfo, AppUser } from '../types';
 
 interface HeaderProps {
   syncInfo: SyncInfo;
@@ -9,7 +9,9 @@ interface HeaderProps {
   activeTab: 'dashboard' | 'recherche' | 'calendrier' | 'sync';
   setActiveTab: (tab: 'dashboard' | 'recherche' | 'calendrier' | 'sync') => void;
   onOpenExportModal: () => void;
-  onOpenAddResourceModal?: () => void;
+  currentUser: AppUser;
+  onOpenAdminPanel: () => void;
+  onLogout: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,7 +21,9 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onOpenExportModal,
-  onOpenAddResourceModal,
+  currentUser,
+  onOpenAdminPanel,
+  onLogout,
 }) => {
   const formattedSyncTime = new Date(syncInfo.derniereSynchro).toLocaleTimeString('fr-FR', {
     hour: '2-digit',
@@ -71,16 +75,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{isSyncing ? 'Synchronisation...' : 'Synchroniser'}</span>
             </button>
 
-            {onOpenAddResourceModal && (
-              <button
-                onClick={onOpenAddResourceModal}
-                className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/40 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                <span>+ Nouvel Agent RH</span>
-              </button>
-            )}
-
             <button
               onClick={onOpenExportModal}
               className="inline-flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
@@ -88,6 +82,33 @@ export const Header: React.FC<HeaderProps> = ({
               <FileText className="w-3.5 h-3.5" />
               <span>Rapport / Export</span>
             </button>
+
+            {currentUser.role === 'admin' && (
+              <button
+                onClick={onOpenAdminPanel}
+                className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/40 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Administration</span>
+              </button>
+            )}
+
+            <div className="flex items-center space-x-2 pl-1">
+              <div className="text-right leading-tight hidden sm:block">
+                <div className="text-xs font-semibold text-white">{currentUser.nom}</div>
+                <div className="text-[10px] text-slate-400">
+                  {currentUser.role === 'admin' ? 'Administrateur' : 'Consultant'}
+                </div>
+              </div>
+              <button
+                onClick={onLogout}
+                title="Déconnexion"
+                className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-300 border border-slate-700 hover:border-rose-800 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Déconnexion</span>
+              </button>
+            </div>
           </div>
         </div>
 

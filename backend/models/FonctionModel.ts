@@ -28,19 +28,6 @@ class FonctionModelClass {
     this.fonctionsAffichees = fonctions;
     return this.fonctionsAffichees;
   }
-
-  // Si un nouvel agent est créé avec une fonction pas encore visible dans les
-  // filtres/calendrier, on l'ajoute automatiquement à la liste affichée.
-  public async ensureFonctionVisible(fonction: string): Promise<void> {
-    if (!fonction) return;
-    if (this.fonctionsAffichees === null) {
-      this.fonctionsAffichees = await this.getAllAvailable();
-      return;
-    }
-    if (!this.fonctionsAffichees.includes(fonction)) {
-      this.fonctionsAffichees.push(fonction);
-    }
-  }
 }
 
 export const FonctionModel = new FonctionModelClass();

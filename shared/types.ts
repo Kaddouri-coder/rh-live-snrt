@@ -67,3 +67,14 @@ export interface StatsGlobales {
   parFonction: Record<string, number>;
   parChaine: Record<string, number>;
 }
+
+export type UserRole = 'admin' | 'consultant';
+
+export interface AppUser {
+  id: string;
+  email: string;
+  nom: string;
+  role: UserRole;
+  telephone?: string;
+  matricule?: string;
+}

@@ -2,28 +2,40 @@ import { Router } from 'express';
 import {
   getRessources,
   getRessourceById,
-  createRessource,
   updateRessource,
   deleteRessource,
 } from '../controllers/ressourcesController';
-import { getAffectations, createAffectation } from '../controllers/affectationsController';
+import { getAffectations } from '../controllers/affectationsController';
 import { checkDisponibilite } from '../controllers/disponibiliteController';
 import { getFonctionsConfig, updateFonctionsConfig } from '../controllers/fonctionsController';
 import { getSyncStatus, triggerSync, getStats } from '../controllers/syncController';
 import { getReferentiels } from '../controllers/referentielsController';
+import { login } from '../controllers/authController';
+import { getUsers, createUser, updateUser, deleteUser } from '../controllers/usersController';
+import { requireAuth, requireAdmin } from '../middleware/authMiddleware';
 
 const router = Router();
 
+// Authentication (public)
+router.post('/auth/login', login);
+
+// Everything below requires a valid session
+router.use(requireAuth);
+
+// Users administration (admin only)
+router.get('/users', requireAdmin, getUsers);
+router.post('/users', requireAdmin, createUser);
+router.put('/users/:id', requireAdmin, updateUser);
+router.delete('/users/:id', requireAdmin, deleteUser);
+
 // Resources
 router.get('/ressources', getRessources);
-router.post('/ressources', createRessource);
 router.get('/ressources/:id', getRessourceById);
 router.put('/ressources/:id', updateRessource);
 router.delete('/ressources/:id', deleteRessource);
 
 // Affectations
 router.get('/affectations', getAffectations);
-router.post('/affectations', createAffectation);
 
 // Availability search
 router.post('/disponibilite', checkDisponibilite);

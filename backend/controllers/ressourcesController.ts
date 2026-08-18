@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { RessourceModel } from '../models/RessourceModel';
 import { AffectationModel } from '../models/AffectationModel';
 import { SyncModel } from '../models/SyncModel';
-import { FonctionModel } from '../models/FonctionModel';   // zid had l'import
 
 export const getRessources = async (req: Request, res: Response) => {
   const ressources = await RessourceModel.getAll();
@@ -20,19 +19,6 @@ export const getRessourceById = async (req: Request, res: Response) => {
     ressource,
     affectations,
   });
-};
-
-export const createRessource = async (req: Request, res: Response) => {
-  const data = req.body;
-  if (!data.nom || !data.prenom || !data.fonction || !data.chaineRattachement) {
-    return res.status(400).json({ error: 'Champs requis manquants (nom, prenom, fonction, chaineRattachement)' });
-  }
-
-  const newRes = await RessourceModel.create(data);
-  await FonctionModel.ensureFonctionVisible(newRes.fonction);   // <-- zid had l'ligne
-  SyncModel.addLog(`Nouvel agent RH ajouté : ${newRes.prenom} ${newRes.nom} (${newRes.fonction}).`, 'success');
-
-  res.status(201).json(newRes);
 };
 
 export const updateRessource = async (req: Request, res: Response) => {

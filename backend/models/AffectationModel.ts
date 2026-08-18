@@ -31,69 +31,9 @@ class AffectationModelClass {
     return result.rows.map(mapRowToAffectation);
   }
 
-  // Génère un ID séquentiel du type "aff-004" (au lieu d'un timestamp).
-  // Vérifie l'unicité en base au cas où il y aurait des "trous" dans la numérotation.
-  private async generateNextId(): Promise<string> {
-    const countResult = await pool.query('SELECT COUNT(*)::int AS count FROM affectations');
-    let n = countResult.rows[0].count + 1;
-    let candidate = `aff-${String(n).padStart(3, '0')}`;
-
-    while (true) {
-      const exists = await pool.query('SELECT 1 FROM affectations WHERE id = $1', [candidate]);
-      if (exists.rows.length === 0) break;
-      n += 1;
-      candidate = `aff-${String(n).padStart(3, '0')}`;
-    }
-
-    return candidate;
-  }
-
-  public async create(data: Partial<Affectation>): Promise<Affectation> {
-    const id = await this.generateNextId();
-    const ressourceId = data.ressourceId || '';
-    const emissionNom = data.emissionNom || 'Nouvelle Émission';
-    const codeEmission = data.codeEmission || `EM-${Math.floor(100 + Math.random() * 900)}`;
-    const lieu = data.lieu || 'Studio 1 - Rabat';
-    const chaine = data.chaine || 'Al Aoula';
-    const dateDebut = data.dateDebut || new Date().toISOString();
-    const dateFin = data.dateFin || new Date(Date.now() + 7200000).toISOString();
-    const typeProduction = data.typeProduction || 'Plateau';
-    const statut = data.statut || 'Confirmé';
-
-    const result = await pool.query(
-      `INSERT INTO affectations
-        (id, ressource_id, emission_nom, code_emission, lieu, chaine, date_debut, date_fin, type_production, statut)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-       RETURNING *`,
-      [id, ressourceId, emissionNom, codeEmission, lieu, chaine, dateDebut, dateFin, typeProduction, statut]
-    );
-
-    return mapRowToAffectation(result.rows[0]);
-  }
-
   public async count(): Promise<number> {
     const result = await pool.query('SELECT COUNT(*)::int AS count FROM affectations');
     return result.rows[0].count;
-  }
-
-  // Vérifie si une ressource a déjà une affectation qui chevauche la période donnée.
-  // Retourne l'affectation en conflit (la première trouvée), ou null si aucune.
-  public async checkConflict(
-    ressourceId: string,
-    dateDebut: string,
-    dateFin: string,
-    excludeAffectationId?: string
-  ): Promise<Affectation | null> {
-    const result = await pool.query(
-      `SELECT * FROM affectations
-       WHERE ressource_id = $1
-         AND date_debut < $3
-         AND date_fin > $2
-         AND ($4::text IS NULL OR id <> $4)
-       LIMIT 1`,
-      [ressourceId, dateDebut, dateFin, excludeAffectationId || null]
-    );
-    return result.rows.length > 0 ? mapRowToAffectation(result.rows[0]) : null;
   }
 
   public async checkDisponibilite(filtres: FiltresRecherche): Promise<DisponibiliteResult[]> {
