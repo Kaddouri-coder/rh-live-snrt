@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppUser } from '../types';
-import { X, UserPlus, AlertTriangle, CheckCircle2, ShieldCheck, Users, Pencil, Trash2, XCircle, Search } from 'lucide-react';
+import { X, UserPlus, AlertTriangle, CheckCircle2, ShieldCheck, Users, Pencil, Trash2, XCircle, Search, Eye, EyeOff } from 'lucide-react';
 
 interface AdminPanelProps {
   token: string;
@@ -16,6 +16,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ token, currentUser, onCl
   const [email, setEmail] = useState('');
   const [nom, setNom] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [telephone, setTelephone] = useState('');
   const [matricule, setMatricule] = useState('');
   const [role, setRole] = useState<'admin' | 'consultant'>('consultant');
@@ -209,18 +210,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ token, currentUser, onCl
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
-            <div>
+                        <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 {isEditing ? 'Nouveau mot de passe' : 'Mot de passe *'}
               </label>
-              <input
-                type="password"
-                required={!isEditing}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={isEditing ? 'Laisser vide pour ne pas changer' : '••••••••'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required={!isEditing}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={isEditing ? 'Laisser vide pour ne pas changer' : '••••••••'}
+                  className="w-full px-3 py-2 pr-9 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  tabIndex={-1}
+                  title={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Téléphone</label>

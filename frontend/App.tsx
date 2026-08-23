@@ -6,7 +6,6 @@ import { ResourceList } from './components/ResourceList';
 import { CalendarView } from './components/CalendarView';
 import { ResourceProfileModal } from './components/ResourceProfileModal';
 import { AssignmentDetailsModal } from './components/AssignmentDetailsModal';
-import { MPlannerSyncModal } from './components/MPlannerSyncModal';
 import { ExportReportModal } from './components/ExportReportModal';
 import { LoginPage } from './components/LoginPage';
 import { AdminPanel } from './components/AdminPanel';
@@ -16,13 +15,22 @@ import {
   DisponibiliteResult,
   RessourceHumaine,
   Affectation,
-  SyncInfo,
   StatsGlobales,
   AppUser,
 } from './types';
 
 const TOKEN_KEY = 'mplanner_token';
 const USER_KEY = 'mplanner_user';
+// Renvoie la date/heure actuelle au format "YYYY-MM-DDTHH:mm" (attendu par <input type="datetime-local">)
+function getNowDateTimeStr(hourOverride?: number, minuteOverride?: number): string {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hour = String(hourOverride ?? d.getHours()).padStart(2, '0');
+  const minute = String(minuteOverride ?? d.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+}
 
 export default function App() {
   // --- Authentification ---
@@ -61,11 +69,11 @@ export default function App() {
     return res;
   };
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'recherche' | 'calendrier' | 'sync'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'recherche' | 'calendrier'>('dashboard');
 
   const [filtres, setFiltres] = useState<FiltresRecherche>({
-    dateDebut: '2026-08-10T09:00',
-    dateFin: '2026-08-10T14:00',
+    dateDebut: getNowDateTimeStr(9, 0),
+    dateFin: getNowDateTimeStr(14, 0),
     chaine: 'Toutes les chaînes',
     direction: 'Toutes les directions',
     fonction: 'Toutes les fonctions',
@@ -79,14 +87,6 @@ export default function App() {
   const [allAffectations, setAllAffectations] = useState<Affectation[]>([]);
   const [fonctionsAffichees, setFonctionsAffichees] = useState<string[]>([]);
 
-  const [syncInfo, setSyncInfo] = useState<SyncInfo>({
-    derniereSynchro: new Date('2026-08-06T11:30:00Z').toISOString(),
-    statut: 'Succès',
-    nbRessourcesSync: 16,
-    nbAffectationsSync: 10,
-    logs: [],
-  });
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [selectedProfile, setSelectedProfile] = useState<{
@@ -136,18 +136,6 @@ export default function App() {
     }
   };
 
-  const fetchSyncStatus = async () => {
-    try {
-      const res = await apiFetch('/api/sync/status');
-      if (res.ok) {
-        const data = await res.json();
-        setSyncInfo(data);
-      }
-    } catch (err) {
-      console.error('Erreur sync status:', err);
-    }
-  };
-
   const fetchFonctions = async () => {
     try {
       const res = await apiFetch('/api/fonctions');
@@ -168,7 +156,6 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fonctions: newFonctions }),
       });
-      await fetchSyncStatus();
     } catch (err) {
       console.error('Erreur sauvegarde fonctions:', err);
     }
@@ -192,30 +179,45 @@ export default function App() {
     }
   };
 
-  const handleTriggerSync = async () => {
-    setIsSyncing(true);
-    try {
-      const res = await apiFetch('/api/sync/trigger', { method: 'POST' });
-      if (res.ok) {
-        const newSyncData = await res.json();
-        setSyncInfo(newSyncData);
-        await fetchAvailability();
-        await fetchStats();
-        await fetchAllData();
-      }
-    } catch (err) {
-      console.error('Erreur trigger sync:', err);
-    } finally {
-      setTimeout(() => setIsSyncing(false), 500);
-    }
-  };
-
   useEffect(() => {
     if (!token) return;
-    fetchSyncStatus();
     fetchAllData();
     fetchAvailability();
     fetchStats();
+  }, [token]);
+
+  // Connexion WebSocket : dès qu'un autre utilisateur modifie une ressource,
+  // une affectation ou un utilisateur, on recharge automatiquement les données.
+  useEffect(() => {
+    if (!token) return;
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socket = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+    socket.onopen = () => {
+      console.log('🔌 WebSocket connecté.');
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        // Quel que soit le type d'évènement, on rafraîchit les données affichées.
+        fetchAllData();
+        fetchAvailability();
+        fetchStats();
+        console.log('📡 Mise à jour temps réel reçue :', message.type);
+      } catch (err) {
+        console.error('Erreur message WebSocket:', err);
+      }
+    };
+
+    socket.onerror = (err) => {
+      console.error('Erreur WebSocket:', err);
+    };
+
+    return () => {
+      socket.close();
+    };
   }, [token]);
 
   useEffect(() => {
@@ -245,8 +247,8 @@ export default function App() {
 
   const handleResetFilters = () => {
     const defaultFiltres: FiltresRecherche = {
-      dateDebut: '2026-08-10T09:00',
-      dateFin: '2026-08-10T14:00',
+      dateDebut: getNowDateTimeStr(9, 0),
+      dateFin: getNowDateTimeStr(14, 0),
       chaine: 'Toutes les chaînes',
       direction: 'Toutes les directions',
       fonction: 'Toutes les fonctions',
@@ -292,10 +294,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col selection:bg-emerald-500 selection:text-white">
-      <Header
-        syncInfo={syncInfo}
-        onTriggerSync={handleTriggerSync}
-        isSyncing={isSyncing}
+            <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenExportModal={() => setIsExportReportOpen(true)}
@@ -338,7 +337,7 @@ export default function App() {
               <div className="bg-white rounded-xl p-12 text-center border border-slate-200">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
                 <p className="text-xs text-slate-500 font-medium">
-                  Calcul de la disponibilité RH mPlanner V2 en cours...
+                  Calcul de la disponibilité RH cours...
                 </p>
               </div>
             ) : (
@@ -370,19 +369,12 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'sync' && (
-          <MPlannerSyncModal
-            syncInfo={syncInfo}
-            onTriggerSync={handleTriggerSync}
-            isSyncing={isSyncing}
-          />
-        )}
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
         <div className="max-w-[1800px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
-            Application de consultation de la disponibilité des Ressources Humaines • <strong>mPlanner V2</strong>
+            Application de consultation de la disponibilité des Ressources Humaines • <strong>RH Live</strong>
           </span>
           <span>
             SNRT / Architecture MERN (Express / React / Node.js)
@@ -414,7 +406,6 @@ export default function App() {
           resultats={resultatsDispo}
           filtres={filtres}
           onClose={() => setIsExportReportOpen(false)}
-          derniereSynchro={syncInfo.derniereSynchro}
         />
       )}
 

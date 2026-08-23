@@ -25,6 +25,25 @@ interface CalendarViewProps {
 
 type ModeVue = 'jour' | 'semaine' | 'mois' | 'periode';
 
+// Renvoie la date d'aujourd'hui (heure locale) au format "YYYY-MM-DD"
+function getTodayStr(): string {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Renvoie la date "aujourd'hui + N jours" au format "YYYY-MM-DD"
+function getDateStrPlusDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export const CalendarView: React.FC<CalendarViewProps> = ({
   ressources,
   affectations,
@@ -33,14 +52,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   fonctionsAffichees: externalFonctionsAffichees,
   onUpdateFonctionsAffichees,
 }) => {
-  const allAvailableFonctions = FONCTIONS_LIST.filter((f) => f !== 'Toutes les fonctions');
+    // Liste des fonctions réellement présentes dans les ressources (dynamique),
+  // au lieu d'une liste statique qui peut être désynchronisée de la base.
+  const allAvailableFonctions = Array.from(
+    new Set(ressources.map((r) => r.fonction).filter(Boolean))
+  ).sort();
   
   const [internalFonctionsAffichees, setInternalFonctionsAffichees] = useState<string[]>(allAvailableFonctions);
   const activeFonctions = externalFonctionsAffichees || internalFonctionsAffichees;
 
   const [isConfigModalOpen, setIsConfigModalOpen] = useState<boolean>(false);
   const [modeVue, setModeVue] = useState<ModeVue>('jour');
-  const [selectedDateStr, setSelectedDateStr] = useState<string>('2026-08-10');
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(getTodayStr());
   const [filterFonction, setFilterFonction] = useState<string>('Toutes les fonctions');
   const [filterChaine, setFilterChaine] = useState<string>('Toutes les chaînes');
 
@@ -52,8 +75,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     }
   };
 
-  const [periodStart, setPeriodStart] = useState<string>('2026-08-10');
-  const [periodEnd, setPeriodEnd] = useState<string>('2026-08-23');
+  const [periodStart, setPeriodStart] = useState<string>(getTodayStr());
+  const [periodEnd, setPeriodEnd] = useState<string>(getDateStrPlusDays(13));
 
   const [monthSubView, setMonthSubView] = useState<'matrix' | 'calendar'>('matrix');
 
@@ -129,7 +152,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const monthNameFr = refDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
 
   const applyPresetPeriod = (days: number) => {
-    const start = new Date('2026-08-10T00:00:00');
+    const start = new Date(getTodayStr() + 'T00:00:00');
     const end = addDays(start, days - 1);
     setPeriodStart(formatDateStr(start));
     setPeriodEnd(formatDateStr(end));
@@ -317,7 +340,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </span>
           <span className="flex items-center gap-1 text-rose-800">
             <span className="w-2.5 h-2.5 bg-rose-500 rounded-xs inline-block"></span>
-            Occupée (mPlanner)
+            Occupée
           </span>
         </div>
       </div>

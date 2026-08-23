@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import http from 'http';
 import { createServer as createViteServer } from 'vite';
 import apiRouter from './backend/routes/apiRouter';
 import { testConnection } from './backend/db';
+import { attachWebSocket } from './backend/websocket';
 
 async function startServer() {
   const app = express();
@@ -18,7 +20,7 @@ async function startServer() {
 
   // Health check endpoint
   app.get('/api/health', (req: Request, res: Response) => {
-    res.json({ status: 'ok', app: 'mPlanner V2 - Fullstack App' });
+    res.json({ status: 'ok', app: 'RH Live - Fullstack App' });
   });
 
   // Serve Frontend via Vite middleware in Dev or Static files in Production
@@ -36,8 +38,13 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`mPlanner V2 backend & frontend running on http://0.0.0.0:${PORT}`);
+  // On crée un serveur HTTP explicite (au lieu de app.listen directement)
+  // afin de pouvoir y attacher le serveur WebSocket sur le même port.
+  const httpServer = http.createServer(app);
+  attachWebSocket(httpServer);
+
+  httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`RH Live backend & frontend running on http://0.0.0.0:${PORT}`);
   });
 }
 

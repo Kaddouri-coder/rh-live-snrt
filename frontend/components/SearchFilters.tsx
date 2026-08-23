@@ -136,7 +136,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1">
-              Chaîne / Compte mPlanner
+              Chaîne
             </label>
             <select
               value={filtres.chaine}

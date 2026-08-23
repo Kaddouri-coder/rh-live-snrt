@@ -47,18 +47,6 @@ export interface DisponibiliteResult {
   affectationsSurPeriode?: Affectation[];
 }
 
-export interface SyncInfo {
-  derniereSynchro: string;
-  statut: 'Succès' | 'En cours' | 'Erreur';
-  nbRessourcesSync: number;
-  nbAffectationsSync: number;
-  logs: Array<{
-    timestamp: string;
-    message: string;
-    type: 'info' | 'success' | 'warning' | 'error';
-  }>;
-}
-
 export interface StatsGlobales {
   totalRessources: number;
   totalAffectations: number;

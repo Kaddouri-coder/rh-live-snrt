@@ -8,7 +8,7 @@ import {
 import { getAffectations } from '../controllers/affectationsController';
 import { checkDisponibilite } from '../controllers/disponibiliteController';
 import { getFonctionsConfig, updateFonctionsConfig } from '../controllers/fonctionsController';
-import { getSyncStatus, triggerSync, getStats } from '../controllers/syncController';
+import { getStats } from '../controllers/syncController';
 import { getReferentiels } from '../controllers/referentielsController';
 import { login } from '../controllers/authController';
 import { getUsers, createUser, updateUser, deleteUser } from '../controllers/usersController';
@@ -44,9 +44,7 @@ router.post('/disponibilite', checkDisponibilite);
 router.get('/fonctions', getFonctionsConfig);
 router.put('/fonctions', updateFonctionsConfig);
 
-// Synchronization & Statistics
-router.get('/sync', getSyncStatus);
-router.post('/sync/trigger', triggerSync);
+// Statistics
 router.get('/stats', getStats);
 
 // Referentiels metadata

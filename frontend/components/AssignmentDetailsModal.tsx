@@ -39,7 +39,7 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
 
           <div className="flex items-center space-x-2 mb-1">
             <span className="bg-rose-800 text-rose-200 border border-rose-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Affectation mPlanner V2
+              Affectation
             </span>
             <span className="text-xs text-rose-300 font-mono">
               #{affectation.codeEmission || affectation.id}

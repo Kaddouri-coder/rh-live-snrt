@@ -7,14 +7,12 @@ interface ExportReportModalProps {
   resultats: DisponibiliteResult[];
   filtres: FiltresRecherche;
   onClose: () => void;
-  derniereSynchro: string;
 }
 
 export const ExportReportModal: React.FC<ExportReportModalProps> = ({
   resultats,
   filtres,
   onClose,
-  derniereSynchro,
 }) => {
   const handlePrint = () => {
     window.print();
@@ -50,7 +48,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
           <img src="/logo-snrt-full.png" alt="SNRT" className="h-16 object-contain shrink-0" />
           <div>
             <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
-              mPlanner V2 - RAPPORT DE DISPONIBILITÉ RH
+              RH LIVE - RAPPORT DE DISPONIBILITÉ RH
             </h1>
             <p className="text-xs text-slate-600 mt-0.5">
               Royaume du Maroc • Société Nationale de Radiodiffusion et de Télévision
@@ -59,7 +57,6 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
         </div>
         <div className="text-right text-xs text-slate-500 font-mono whitespace-nowrap">
           <div>Généré le : {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR')}</div>
-          <div>Synchro mPlanner : {formatDate(derniereSynchro)}</div>
         </div>
       </div>
 
@@ -137,7 +134,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
       </table>
 
       <div className="pt-8 text-center text-[10px] text-slate-400 border-t border-slate-200">
-        Document généré automatiquement par l'application de consultation des disponibilités RH mPlanner V2.
+        Document généré automatiquement par l'application RH Live.
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
         {/* Nom du produit en haut a droite */}
         <div className="absolute top-10 right-8 sm:right-16">
-          <span className="text-xs font-semibold text-emerald-600 tracking-wide uppercase">mPlanner V2</span>
+          <span className="text-xs font-semibold text-emerald-600 tracking-wide uppercase">RH Live</span>
         </div>
 
         <div className="w-full max-w-lg">

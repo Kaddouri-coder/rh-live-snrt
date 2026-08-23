@@ -1,49 +1,24 @@
-import { SyncInfo, StatsGlobales } from '../../shared/types';
+import { StatsGlobales } from '../../shared/types';
 import { RessourceModel } from './RessourceModel';
 import { AffectationModel } from './AffectationModel';
 
-class SyncModelClass {
-  private syncState: SyncInfo = {
-    derniereSynchro: new Date('2026-08-06T11:30:00Z').toISOString(),
-    statut: 'Succès',
-    nbRessourcesSync: 0,
-    nbAffectationsSync: 0,
-    logs: [
-      {
-        timestamp: new Date('2026-08-06T11:30:00Z').toISOString(),
-        message: 'Synchronisation complète mPlanner V2 réussie.',
-        type: 'success',
-      },
-      {
-        timestamp: new Date('2026-08-06T10:15:00Z').toISOString(),
-        message: 'Mise à jour des grilles de programmes hebdomadaires.',
-        type: 'info',
-      },
-    ],
-  };
+interface LogEntry {
+  timestamp: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+}
 
-  public async getSyncState(): Promise<SyncInfo> {
-    this.syncState.nbRessourcesSync = await RessourceModel.count();
-    this.syncState.nbAffectationsSync = await AffectationModel.count();
-    return this.syncState;
-  }
+class SyncModelClass {
+  // Journal interne d'évènements (audit léger). Non affiché dans l'UI actuellement,
+  // conservé pour une éventuelle page d'historique future.
+  private logs: LogEntry[] = [];
 
   public addLog(message: string, type: 'info' | 'success' | 'warning' | 'error') {
-    this.syncState.logs.unshift({
+    this.logs.unshift({
       timestamp: new Date().toISOString(),
       message,
       type,
     });
-  }
-
-  public async triggerSync(): Promise<SyncInfo> {
-    this.syncState.derniereSynchro = new Date().toISOString();
-    this.syncState.statut = 'Succès';
-    this.syncState.nbRessourcesSync = await RessourceModel.count();
-    this.syncState.nbAffectationsSync = await AffectationModel.count();
-
-    this.addLog('Synchronisation manuelle mPlanner V2 déclenchée avec succès.', 'success');
-    return this.syncState;
   }
 
   public async getStats(): Promise<StatsGlobales> {

@@ -238,7 +238,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                             onClick={() => onSelectAffectation(aff)}
                             className="mt-1 text-[11px] text-emerald-700 hover:underline font-semibold flex items-center gap-1"
                           >
-                            <span>Consulter la planification mPlanner</span>
+                            <span>Consulter la planification</span>
                             <ExternalLink className="w-3 h-3" />
                           </button>
                         </div>
@@ -272,7 +272,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                   <th className="py-3 px-4 font-semibold">Fonction</th>
                   <th className="py-3 px-4 font-semibold">Direction / Chaîne</th>
                   <th className="py-3 px-4 font-semibold">État</th>
-                  <th className="py-3 px-4 font-semibold">Occupation & Activité mPlanner</th>
+                  <th className="py-3 px-4 font-semibold">Occupation & Activité</th>
                   <th className="py-3 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>

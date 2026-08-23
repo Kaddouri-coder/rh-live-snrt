@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { UserModel } from '../models/UserModel';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { broadcast } from '../websocket';
 
 export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
   const users = await UserModel.getAll();
@@ -23,6 +24,7 @@ export const createUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 
   const newUser = await UserModel.create({ email, password, nom: nom || email, role, telephone, matricule });
+  broadcast('USER_CREATED', { id: newUser.id });
   res.status(201).json(newUser);
 };
 
@@ -39,6 +41,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     return res.status(404).json({ error: 'Utilisateur non trouvé' });
   }
 
+  broadcast('USER_UPDATED', { id: updated.id });
   res.json(updated);
 };
 
@@ -54,5 +57,6 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
     return res.status(404).json({ error: 'Utilisateur non trouvé' });
   }
 
+  broadcast('USER_DELETED', { id: deleted.id });
   res.json({ message: 'Utilisateur supprimé avec succès', user: deleted });
 };

@@ -59,7 +59,7 @@ export const ResourceProfileModal: React.FC<ResourceProfileModalProps> = ({
                   {ressource.prenom} {ressource.nom}
                 </h2>
                 <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                  Fiche Ressource mPlanner
+                  Fiche Ressource 
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-1 flex items-center gap-2">
@@ -118,12 +118,12 @@ export const ResourceProfileModal: React.FC<ResourceProfileModalProps> = ({
           <div>
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Calendar className="w-4 h-4 text-emerald-600" />
-              Historique des affectations mPlanner V2 ({affectations.length})
+              Historique des affectations ({affectations.length})
             </h3>
 
             {affectations.length === 0 ? (
               <p className="text-xs text-slate-500 italic bg-slate-50 p-3 rounded-lg border border-slate-200">
-                Aucune affectation enregistrée dans mPlanner V2 pour le moment.
+                Aucune affectation enregistrée pour le moment.
               </p>
             ) : (
               <div className="space-y-2.5">
