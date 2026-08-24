@@ -1,24 +1,23 @@
 import React from 'react';
 import { Calendar, LayoutDashboard, Search, FileText, ShieldCheck, LogOut } from 'lucide-react';
-import { AppUser } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   activeTab: 'dashboard' | 'recherche' | 'calendrier';
   setActiveTab: (tab: 'dashboard' | 'recherche' | 'calendrier') => void;
   onOpenExportModal: () => void;
-  currentUser: AppUser;
   onOpenAdminPanel: () => void;
-  onLogout: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onOpenExportModal,
-  currentUser,
   onOpenAdminPanel,
-  onLogout,
 }) => {
+  const { currentUser, logout } = useAuth();
+  if (!currentUser) return null;
+
   return (
     <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
@@ -69,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               </div>
               <button
-                onClick={onLogout}
+                onClick={logout}
                 title="Déconnexion"
                 className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-300 border border-slate-700 hover:border-rose-800 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
               >

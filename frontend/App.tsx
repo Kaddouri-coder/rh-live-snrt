@@ -9,6 +9,8 @@ import { AssignmentDetailsModal } from './components/AssignmentDetailsModal';
 import { ExportReportModal } from './components/ExportReportModal';
 import { LoginPage } from './components/LoginPage';
 import { AdminPanel } from './components/AdminPanel';
+import * as api from './services/api';
+import { useAuth } from './context/AuthContext';
 
 import {
   FiltresRecherche,
@@ -16,11 +18,8 @@ import {
   RessourceHumaine,
   Affectation,
   StatsGlobales,
-  AppUser,
 } from './types';
 
-const TOKEN_KEY = 'mplanner_token';
-const USER_KEY = 'mplanner_user';
 // Renvoie la date/heure actuelle au format "YYYY-MM-DDTHH:mm" (attendu par <input type="datetime-local">)
 function getNowDateTimeStr(hourOverride?: number, minuteOverride?: number): string {
   const d = new Date();
@@ -33,41 +32,16 @@ function getNowDateTimeStr(hourOverride?: number, minuteOverride?: number): stri
 }
 
 export default function App() {
-  // --- Authentification ---
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
-  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => {
-    const raw = localStorage.getItem(USER_KEY);
-    return raw ? JSON.parse(raw) : null;
-  });
+  // --- Authentification (via Context, plus de useState local ici) ---
+  const { token, currentUser, login: handleLoginSuccess, logout: handleLogout } = useAuth();
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
 
-  const handleLoginSuccess = (newToken: string, user: AppUser) => {
-    localStorage.setItem(TOKEN_KEY, newToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-    setToken(newToken);
-    setCurrentUser(user);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    setToken(null);
-    setCurrentUser(null);
-  };
-
-  // Wrapper fetch qui ajoute automatiquement le token d'authentification,
-  // et déconnecte automatiquement si la session est invalide/expirée (401).
-  const apiFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
-    const headers = {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${token}`,
-    };
-    const res = await fetch(url, { ...options, headers });
-    if (res.status === 401) {
-      handleLogout();
-    }
-    return res;
-  };
+  // Le service API appelle automatiquement handleLogout si le serveur
+  // répond 401 (session invalide/expirée), sans que chaque fonction
+  // ci-dessous ait besoin d'y penser.
+  useEffect(() => {
+    api.setUnauthorizedHandler(handleLogout);
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'recherche' | 'calendrier'>('dashboard');
 
@@ -104,18 +78,8 @@ export default function App() {
   const fetchAvailability = async (currentFiltres = filtres) => {
     try {
       setIsLoading(true);
-      const res = await apiFetch('/api/disponibilite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentFiltres),
-      });
-
-      if (!res.ok) {
-        throw new Error('Erreur lors du calcul de disponibilité');
-      }
-
-      const data = await res.json();
-      setResultatsDispo(data.resultats || []);
+      const resultats = await api.checkDisponibilite(currentFiltres);
+      setResultatsDispo(resultats);
     } catch (err) {
       console.error('Erreur API disponibilite:', err);
     } finally {
@@ -125,12 +89,8 @@ export default function App() {
 
   const fetchStats = async () => {
     try {
-      const query = `?debut=${encodeURIComponent(filtres.dateDebut)}&fin=${encodeURIComponent(filtres.dateFin)}`;
-      const res = await apiFetch(`/api/stats${query}`);
-      if (res.ok) {
-        const data = await res.json();
-        setStatsGlobales(data);
-      }
+      const data = await api.getStats(filtres.dateDebut, filtres.dateFin);
+      if (data) setStatsGlobales(data);
     } catch (err) {
       console.error('Erreur API stats:', err);
     }
@@ -138,11 +98,8 @@ export default function App() {
 
   const fetchFonctions = async () => {
     try {
-      const res = await apiFetch('/api/fonctions');
-      if (res.ok) {
-        const data = await res.json();
-        setFonctionsAffichees(data.fonctionsAffichees || []);
-      }
+      const fonctions = await api.getFonctionsAffichees();
+      setFonctionsAffichees(fonctions);
     } catch (err) {
       console.error('Erreur fonctions:', err);
     }
@@ -151,11 +108,7 @@ export default function App() {
   const handleUpdateFonctionsAffichees = async (newFonctions: string[]) => {
     try {
       setFonctionsAffichees(newFonctions);
-      await apiFetch('/api/fonctions', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fonctions: newFonctions }),
-      });
+      await api.updateFonctionsAffichees(newFonctions);
     } catch (err) {
       console.error('Erreur sauvegarde fonctions:', err);
     }
@@ -163,16 +116,12 @@ export default function App() {
 
   const fetchAllData = async () => {
     try {
-      const resRes = await apiFetch('/api/ressources');
-      if (resRes.ok) {
-        const ressourcesData = await resRes.json();
-        setAllRessources(ressourcesData);
-      }
-      const resAff = await apiFetch('/api/affectations');
-      if (resAff.ok) {
-        const affectationsData = await resAff.json();
-        setAllAffectations(affectationsData);
-      }
+      const ressourcesData = await api.getRessources();
+      setAllRessources(ressourcesData);
+
+      const affectationsData = await api.getAffectations();
+      setAllAffectations(affectationsData);
+
       await fetchFonctions();
     } catch (err) {
       console.error('Erreur chargement donnees globales:', err);
@@ -261,9 +210,8 @@ export default function App() {
 
   const handleOpenResourceProfile = async (ressource: RessourceHumaine) => {
     try {
-      const res = await apiFetch(`/api/ressources/${ressource.id}`);
-      if (res.ok) {
-        const data = await res.json();
+      const data = await api.getRessourceById(ressource.id);
+      if (data) {
         setSelectedProfile({
           ressource: data.ressource,
           affectations: data.affectations,
@@ -294,13 +242,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col selection:bg-emerald-500 selection:text-white">
-            <Header
+      <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenExportModal={() => setIsExportReportOpen(true)}
-        currentUser={currentUser}
         onOpenAdminPanel={() => setIsAdminPanelOpen(true)}
-        onLogout={handleLogout}
       />
 
       <main className="flex-1 max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -337,7 +283,7 @@ export default function App() {
               <div className="bg-white rounded-xl p-12 text-center border border-slate-200">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
                 <p className="text-xs text-slate-500 font-medium">
-                  Calcul de la disponibilité RH cours...
+                  Calcul de la disponibilité RH en cours...
                 </p>
               </div>
             ) : (
@@ -368,7 +314,6 @@ export default function App() {
             onUpdateFonctionsAffichees={handleUpdateFonctionsAffichees}
           />
         )}
-
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
@@ -410,7 +355,7 @@ export default function App() {
       )}
 
       {isAdminPanelOpen && (
-        <AdminPanel token={token} currentUser={currentUser} onClose={() => setIsAdminPanelOpen(false)} />
+        <AdminPanel onClose={() => setIsAdminPanelOpen(false)} />
       )}
     </div>
   );

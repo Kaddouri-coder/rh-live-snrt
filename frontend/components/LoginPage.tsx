@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppUser } from '../types';
 import { ArrowRight, AlertTriangle, Eye, EyeOff, Clock, ShieldCheck, Radio } from 'lucide-react';
+import * as api from '../services/api';
 
 interface LoginPageProps {
   onLoginSuccess: (token: string, user: AppUser) => void;
@@ -27,20 +28,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const result = await api.login(email, password);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Erreur de connexion');
+      if (!result.ok || !result.token || !result.user) {
+        setError(result.error || 'Erreur de connexion');
         return;
       }
 
-      onLoginSuccess(data.token, data.user);
+      onLoginSuccess(result.token, result.user);
     } catch (err) {
       setError('Impossible de contacter le serveur.');
     } finally {

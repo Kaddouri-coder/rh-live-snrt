@@ -5,6 +5,7 @@ import { createServer as createViteServer } from 'vite';
 import apiRouter from './backend/routes/apiRouter';
 import { testConnection } from './backend/db';
 import { attachWebSocket } from './backend/websocket';
+import { startDbListener } from './backend/dbListener';
 
 async function startServer() {
   const app = express();
@@ -42,6 +43,7 @@ async function startServer() {
   // afin de pouvoir y attacher le serveur WebSocket sur le même port.
   const httpServer = http.createServer(app);
   attachWebSocket(httpServer);
+  await startDbListener();
 
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`RH Live backend & frontend running on http://0.0.0.0:${PORT}`);

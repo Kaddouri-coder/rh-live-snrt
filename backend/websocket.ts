@@ -15,7 +15,8 @@ export type BroadcastEventType =
   | 'AFFECTATION_DELETED'
   | 'USER_CREATED'
   | 'USER_UPDATED'
-  | 'USER_DELETED';
+  | 'USER_DELETED'
+  | 'DB_CHANGE';
 
 // Attache le serveur WebSocket au serveur HTTP existant (même port que l'API).
 export function attachWebSocket(server: HttpServer): void {
