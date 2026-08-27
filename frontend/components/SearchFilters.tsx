@@ -39,7 +39,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 md:p-6 mb-6">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 md:p-6 mb-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-2">
         <div className="flex items-center space-x-2">
           <Filter className="w-5 h-5 text-emerald-600" />
@@ -63,7 +63,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Disponible',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
           >
             Cameramen Al Aoula (10/08 09h-14h)
           </button>
@@ -76,7 +76,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Disponible',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
           >
             Réalisateurs Disponibles
           </button>
@@ -89,7 +89,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Tous',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
           >
             Effectif Arryadia
           </button>
@@ -193,11 +193,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
           <div className="flex items-center space-x-2">
             <span className="text-xs font-semibold text-slate-700 mr-1">État :</span>
-            <div className="inline-flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <div className="inline-flex bg-slate-100 p-1 rounded-full border border-slate-200">
               <button
                 type="button"
                 onClick={() => handleChange('etat', 'Tous')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Tous'
                     ? 'bg-white text-slate-800 shadow-sm font-semibold'
                     : 'text-slate-600 hover:text-slate-900'
@@ -208,7 +208,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               <button
                 type="button"
                 onClick={() => handleChange('etat', 'Disponible')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Disponible'
                     ? 'bg-emerald-600 text-white shadow-sm font-semibold'
                     : 'text-emerald-700 hover:bg-emerald-50'
@@ -219,7 +219,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               <button
                 type="button"
                 onClick={() => handleChange('etat', 'Occupée')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Occupée'
                     ? 'bg-rose-600 text-white shadow-sm font-semibold'
                     : 'text-rose-700 hover:bg-rose-50'
@@ -234,7 +234,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex items-center space-x-1 px-3 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-200 transition-colors"
+              className="inline-flex items-center space-x-1 px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full border border-slate-200 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Réinitialiser</span>
@@ -242,7 +242,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 
             <button
               type="submit"
-              className="inline-flex items-center space-x-2 px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-lg shadow-md transition-all"
+              className="inline-flex items-center space-x-2 px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-full shadow-md transition-all"
             >
               <Search className="w-4 h-4" />
               <span>Consulter la disponibilité</span>

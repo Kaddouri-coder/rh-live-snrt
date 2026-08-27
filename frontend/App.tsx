@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { SearchFilters } from './components/SearchFilters';
 import { ResourceList } from './components/ResourceList';
@@ -241,15 +241,16 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col selection:bg-emerald-500 selection:text-white">
-      <Header
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex selection:bg-emerald-500 selection:text-white">
+      <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenExportModal={() => setIsExportReportOpen(true)}
         onOpenAdminPanel={() => setIsAdminPanelOpen(true)}
       />
 
-      <main className="flex-1 max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex-1 min-w-0 flex flex-col">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'dashboard' && (
           <Dashboard
             stats={statsGlobales}
@@ -317,7 +318,7 @@ export default function App() {
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        <div className="max-w-[1800px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
             Application de consultation de la disponibilité des Ressources Humaines • <strong>RH Live</strong>
           </span>
@@ -326,6 +327,7 @@ export default function App() {
           </span>
         </div>
       </footer>
+      </div>
 
       {selectedProfile && (
         <ResourceProfileModal

@@ -57,7 +57,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
 
   if (resultats.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
+      <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
           <User className="w-6 h-6" />
         </div>
@@ -71,7 +71,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50 p-3.5 rounded-2xl border border-slate-200 gap-3">
         <div className="text-xs text-slate-700">
           Affichage de <strong className="text-slate-900 font-bold">{resultats.length}</strong> ressource(s) pour la période du{' '}
           <span className="font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
@@ -85,10 +85,10 @@ export const ResourceList: React.FC<ResourceListProps> = ({
 
         <div className="flex items-center space-x-2 text-xs">
           <span className="text-slate-500 font-medium">Vue :</span>
-          <div className="bg-white p-0.5 rounded-lg border border-slate-200 flex">
+          <div className="bg-white p-0.5 rounded-full border border-slate-200 flex">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                 viewMode === 'cards'
                   ? 'bg-slate-800 text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -98,7 +98,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                 viewMode === 'table'
                   ? 'bg-slate-800 text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -263,7 +263,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
       )}
 
       {viewMode === 'table' && (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
