@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Menu } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { SearchFilters } from './components/SearchFilters';
@@ -35,6 +36,7 @@ export default function App() {
   // --- Authentification (via Context, plus de useState local ici) ---
   const { token, currentUser, login: handleLoginSuccess, logout: handleLogout } = useAuth();
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Le service API appelle automatiquement handleLogout si le serveur
   // répond 401 (session invalide/expirée), sans que chaque fonction
@@ -247,9 +249,24 @@ export default function App() {
         setActiveTab={setActiveTab}
         onOpenExportModal={() => setIsExportReportOpen(true)}
         onOpenAdminPanel={() => setIsAdminPanelOpen(true)}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       <div className="flex-1 min-w-0 flex flex-col">
+      {/* Barre supérieure visible uniquement sur mobile, avec le bouton menu */}
+      <div className="md:hidden sticky top-0 z-20 bg-slate-900 text-white flex items-center gap-3 px-4 py-3 shadow-sm">
+        <button onClick={() => setIsSidebarOpen(true)} className="p-1.5 -ml-1.5 text-slate-300 hover:text-white">
+          <Menu className="w-5 h-5" />
+        </button>
+        <div className="w-7 h-7 rounded-md bg-white flex items-center justify-center shrink-0 p-1">
+          <img src="/logo-snrt-icon.webp" alt="Logo SNRT" className="w-full h-full object-contain" />
+        </div>
+        <span className="text-sm font-bold">
+          RH <span className="text-emerald-400 font-extrabold">Live</span>
+        </span>
+      </div>
+
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'dashboard' && (
           <Dashboard

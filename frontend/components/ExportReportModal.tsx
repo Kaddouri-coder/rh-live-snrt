@@ -42,7 +42,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
 
   // Contenu du rapport, réutilisé à la fois pour l'aperçu écran et pour l'impression.
   const reportContent = (
-    <div className="p-8 space-y-6 text-slate-900 bg-white">
+    <div className="p-4 sm:p-8 space-y-6 text-slate-900 bg-white">
       <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4 gap-4">
         <div className="flex items-start gap-4">
           <img src="/logo-snrt-full.png" alt="SNRT" className="h-16 object-contain shrink-0" />
@@ -81,7 +81,8 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
         <span className="text-rose-700">Occupés : {occuCount}</span>
       </div>
 
-      <table className="w-full text-left text-xs border-collapse border border-slate-300">
+      <div className="overflow-x-auto print:overflow-visible">
+      <table className="w-full text-left text-xs border-collapse border border-slate-300 min-w-[640px] print:min-w-0">
         <thead>
           <tr className="bg-slate-100 text-slate-800 border-b border-slate-300">
             <th className="py-2 px-3 border-r border-slate-300 font-bold">Matricule</th>
@@ -132,6 +133,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
           })}
         </tbody>
       </table>
+      </div>
 
       <div className="pt-8 text-center text-[10px] text-slate-400 border-t border-slate-200">
         Document généré automatiquement par l'application RH Live.

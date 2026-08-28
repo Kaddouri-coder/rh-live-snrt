@@ -633,54 +633,56 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </table>
             </div>
           ) : (
-            <div className="grid grid-cols-7 gap-1 bg-slate-200 p-1.5 rounded-xl border border-slate-300">
-              {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((dayHeader) => (
-                <div key={dayHeader} className="bg-slate-800 text-slate-200 font-bold text-center py-2 text-xs rounded">
-                  {dayHeader}
-                </div>
-              ))}
-
-              {monthDays.map((d) => {
-                const dayStr = formatDateStr(d);
-                const dStart = new Date(`${dayStr}T00:00:00.000`);
-                const dEnd = new Date(`${dayStr}T23:59:59.999`);
-
-                const dayAffectations = affectations.filter((aff) => {
-                  const aStart = new Date(aff.dateDebut);
-                  const aEnd = new Date(aff.dateFin);
-                  return aStart < dEnd && aEnd > dStart;
-                });
-
-                return (
-                  <div key={dayStr} className="bg-white p-2 min-h-[90px] rounded border border-slate-200 flex flex-col justify-between">
-                    <div className="flex justify-between items-center text-xs font-bold text-slate-800">
-                      <span>{d.getDate()}</span>
-                      {dayAffectations.length > 0 && (
-                        <span className="text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded-full font-extrabold">
-                          {dayAffectations.length} occ.
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="space-y-1 my-1 overflow-hidden max-h-[50px]">
-                      {dayAffectations.slice(0, 2).map((aff) => (
-                        <div
-                          key={aff.id}
-                          onClick={() => onSelectAffectation(aff)}
-                          className="text-[9px] bg-rose-50 border border-rose-200 text-rose-900 p-1 rounded font-medium truncate cursor-pointer hover:bg-rose-100"
-                        >
-                          {aff.emissionNom}
-                        </div>
-                      ))}
-                      {dayAffectations.length > 2 && (
-                        <div className="text-[9px] text-slate-500 font-semibold text-center">
-                          +{dayAffectations.length - 2} autres...
-                        </div>
-                      )}
-                    </div>
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-7 gap-1 bg-slate-200 p-1.5 rounded-xl border border-slate-300 min-w-[640px]">
+                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((dayHeader) => (
+                  <div key={dayHeader} className="bg-slate-800 text-slate-200 font-bold text-center py-2 text-xs rounded">
+                    {dayHeader}
                   </div>
-                );
-              })}
+                ))}
+
+                {monthDays.map((d) => {
+                  const dayStr = formatDateStr(d);
+                  const dStart = new Date(`${dayStr}T00:00:00.000`);
+                  const dEnd = new Date(`${dayStr}T23:59:59.999`);
+
+                  const dayAffectations = affectations.filter((aff) => {
+                    const aStart = new Date(aff.dateDebut);
+                    const aEnd = new Date(aff.dateFin);
+                    return aStart < dEnd && aEnd > dStart;
+                  });
+
+                  return (
+                    <div key={dayStr} className="bg-white p-2 min-h-[90px] rounded border border-slate-200 flex flex-col justify-between">
+                      <div className="flex justify-between items-center text-xs font-bold text-slate-800">
+                        <span>{d.getDate()}</span>
+                        {dayAffectations.length > 0 && (
+                          <span className="text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded-full font-extrabold">
+                            {dayAffectations.length} occ.
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1 my-1 overflow-hidden max-h-[50px]">
+                        {dayAffectations.slice(0, 2).map((aff) => (
+                          <div
+                            key={aff.id}
+                            onClick={() => onSelectAffectation(aff)}
+                            className="text-[9px] bg-rose-50 border border-rose-200 text-rose-900 p-1 rounded font-medium truncate cursor-pointer hover:bg-rose-100"
+                          >
+                            {aff.emissionNom}
+                          </div>
+                        ))}
+                        {dayAffectations.length > 2 && (
+                          <div className="text-[9px] text-slate-500 font-semibold text-center">
+                            +{dayAffectations.length - 2} autres...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
