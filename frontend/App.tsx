@@ -12,6 +12,7 @@ import { LoginPage } from './components/LoginPage';
 import { AdminPanel } from './components/AdminPanel';
 import * as api from './services/api';
 import { useAuth } from './context/AuthContext';
+import { getNowDateTimeStr } from '../shared/utils/dateHelpers';
 
 import {
   FiltresRecherche,
@@ -20,17 +21,6 @@ import {
   Affectation,
   StatsGlobales,
 } from './types';
-
-// Renvoie la date/heure actuelle au format "YYYY-MM-DDTHH:mm" (attendu par <input type="datetime-local">)
-function getNowDateTimeStr(hourOverride?: number, minuteOverride?: number): string {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const hour = String(hourOverride ?? d.getHours()).padStart(2, '0');
-  const minute = String(minuteOverride ?? d.getMinutes()).padStart(2, '0');
-  return `${year}-${month}-${day}T${hour}:${minute}`;
-}
 
 export default function App() {
   // --- Authentification (via Context, plus de useState local ici) ---

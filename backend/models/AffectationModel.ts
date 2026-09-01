@@ -1,3 +1,4 @@
+import { hasTimeOverlap } from '@/shared/utils/dateOverlap';
 import { Affectation, FiltresRecherche, DisponibiliteResult } from '../../shared/types';
 import { pool } from '../db';
 import { RessourceModel } from './RessourceModel';
@@ -67,7 +68,7 @@ class AffectationModelClass {
           }
           const affStart = new Date(aff.dateDebut);
           const affEnd = new Date(aff.dateFin);
-          return startReq < affEnd && endReq > affStart;
+          return hasTimeOverlap(startReq, endReq, affStart, affEnd);
         });
 
         const estDispo = conflits.length === 0;

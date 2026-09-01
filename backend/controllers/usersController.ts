@@ -2,10 +2,7 @@ import { Response } from 'express';
 import { UserModel } from '../models/UserModel';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
 import { broadcast } from '../websocket';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.
-const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+import { isStrongPassword, isValidEmail } from '@/shared/utils/validation';
 
 export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
   const users = await UserModel.getAll();
@@ -18,10 +15,10 @@ export const createUser = async (req: AuthenticatedRequest, res: Response) => {
   if (!email || !password || !role) {
     return res.status(400).json({ error: 'Email, mot de passe et rôle requis' });
   }
-  if (!EMAIL_REGEX.test(email)) {
+  if (!isValidEmail(email)) {
     return res.status(400).json({ error: 'Adresse email invalide.' });
   }
-  if (!STRONG_PASSWORD_REGEX.test(password)) {
+  if (!isStrongPassword(password)) {
     return res.status(400).json({
       error:
         'Mot de passe trop faible : 8 caractères minimum, avec au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.',
@@ -45,10 +42,10 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { email, nom, role, telephone, matricule, password } = req.body;
 
-  if (email && !EMAIL_REGEX.test(email)) {
+  if (email && !isValidEmail(email)) {
     return res.status(400).json({ error: 'Adresse email invalide.' });
   }
-  if (password && !STRONG_PASSWORD_REGEX.test(password)) {
+  if (password && !isStrongPassword(password)) {
     return res.status(400).json({
       error:
         'Mot de passe trop faible : 8 caractères minimum, avec au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.',

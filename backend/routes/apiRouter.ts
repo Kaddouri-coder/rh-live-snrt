@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   getRessources,
   getRessourceById,
@@ -16,8 +17,27 @@ import { requireAuth, requireAdmin } from '../middleware/authMiddleware';
 
 const router = Router();
 
+// Anti brute-force sur la connexion : 5 tentatives max par IP toutes les 15 minutes.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { error: 'Trop de tentatives de connexion. Réessayez dans quelques minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Garde-fou général contre les abus sur l'ensemble de l'API.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.use(apiLimiter);
+
 // Authentication (public)
-router.post('/auth/login', login);
+router.post('/auth/login', loginLimiter, login);
 
 // Everything below requires a valid session
 router.use(requireAuth);

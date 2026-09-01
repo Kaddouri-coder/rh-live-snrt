@@ -1,6 +1,7 @@
 import { StatsGlobales } from '../../shared/types';
 import { RessourceModel } from './RessourceModel';
 import { AffectationModel } from './AffectationModel';
+import { hasTimeOverlap } from '@/shared/utils/dateOverlap';
 
 interface LogEntry {
   timestamp: string;
@@ -41,7 +42,7 @@ class SyncModelClass {
           const start2 = new Date(resAffs[j].dateDebut);
           const end2 = new Date(resAffs[j].dateFin);
 
-          if (start1 < end2 && end1 > start2) {
+          if (hasTimeOverlap(start1, end1, start2, end2)) {
             conflitsCount++;
           }
         }

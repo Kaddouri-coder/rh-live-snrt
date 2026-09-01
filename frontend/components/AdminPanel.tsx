@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppUser } from '../types';
 import { X, UserPlus, AlertTriangle, CheckCircle2, ShieldCheck, Users, Pencil, Trash2, XCircle, Search, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { isValidEmail, isStrongPassword } from '../../shared/utils/validation';
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -92,15 +93,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     } catch (err) {
       setErrorMsg('Erreur réseau : impossible de contacter le serveur.');
     }
-  };
-
-  const isValidEmail = (value: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  };
-
-  const isStrongPassword = (value: string): boolean => {
-    // Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

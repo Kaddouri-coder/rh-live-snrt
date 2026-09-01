@@ -13,6 +13,7 @@ import {
 import { CHAINES_LIST, FONCTIONS_LIST } from '../data/constants';
 import { FunctionSettingsModal } from './FunctionSettingsModal';
 import { SearchableSelect } from './SearchableSelect';
+import { getTodayStr, getDateStrPlusDays } from '../../shared/utils/dateHelpers';
 
 interface CalendarViewProps {
   ressources: RessourceHumaine[];
@@ -24,25 +25,6 @@ interface CalendarViewProps {
 }
 
 type ModeVue = 'jour' | 'semaine' | 'mois' | 'periode';
-
-// Renvoie la date d'aujourd'hui (heure locale) au format "YYYY-MM-DD"
-function getTodayStr(): string {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-// Renvoie la date "aujourd'hui + N jours" au format "YYYY-MM-DD"
-function getDateStrPlusDays(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
   ressources,
