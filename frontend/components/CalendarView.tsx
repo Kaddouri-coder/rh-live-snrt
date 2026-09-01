@@ -465,7 +465,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       >
                         {res.prenom} {res.nom}
                       </button>
-                      <span className="text-[10px] text-slate-500 font-mono">{res.fonction}</span>
+                      <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between mt-0.5">
+                        <span>{res.fonction}</span>
+                        <span className="bg-slate-100 text-slate-600 px-1 rounded">
+                          {res.chaineRattachement}
+                        </span>
+                      </div>
                     </td>
 
                     {weekDays.map((day) => {
@@ -547,7 +552,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <table className="w-full text-left border-collapse min-w-[1100px]">
                 <thead>
                   <tr className="bg-slate-800 text-slate-200 text-xs font-semibold">
-                    <th className="py-2.5 px-3 border-b border-slate-700 w-48 sticky left-0 bg-slate-800 z-10">
+                    <th className="py-2.5 px-3 border-b border-slate-700 w-60 sticky left-0 bg-slate-800 z-10">
                       Ressource Humaine
                     </th>
                     {monthDays.map((d) => (
@@ -569,10 +574,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <td className="py-2 px-3 font-medium text-slate-900 border-r border-slate-200 sticky left-0 bg-white z-10 shadow-xs">
                         <button
                           onClick={() => onSelectResource(res)}
-                          className="text-left font-bold hover:text-emerald-600 transition-colors block text-xs truncate w-40"
+                          className="text-left font-bold hover:text-emerald-600 transition-colors block text-xs truncate w-48"
                         >
                           {res.prenom} {res.nom}
                         </button>
+                        <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between mt-0.5">
+                          <span>{res.fonction}</span>
+                          <span className="bg-slate-100 text-slate-600 px-1 rounded">
+                            {res.chaineRattachement}
+                          </span>
+                        </div>
                       </td>
 
                       {monthDays.map((d) => {
@@ -731,7 +742,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       >
                         {res.prenom} {res.nom}
                       </button>
-                      <span className="text-[10px] text-slate-500 font-mono">{res.fonction}</span>
+                      <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between mt-0.5">
+                        <span>{res.fonction}</span>
+                        <span className="bg-slate-100 text-slate-600 px-1 rounded">
+                          {res.chaineRattachement}
+                        </span>
+                      </div>
                     </td>
 
                     {customPeriodDays.map((d) => {
