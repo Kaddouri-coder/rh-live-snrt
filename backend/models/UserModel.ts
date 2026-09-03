@@ -20,8 +20,11 @@ class UserModelClass {
   }
 
   // Utilisé uniquement en interne pour la vérification du mot de passe (contient le hash).
+  // La comparaison est insensible à la casse (LOWER) : "User@snrt.ma" et "user@snrt.ma"
+  // doivent être reconnus comme le même compte.
   public async findByEmailWithHash(email: string): Promise<(AppUser & { passwordHash: string }) | null> {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const normalizedEmail = email.trim().toLowerCase();
+    const result = await pool.query('SELECT * FROM users WHERE LOWER(email) = $1', [normalizedEmail]);
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
     return { ...mapRowToUser(row), passwordHash: row.password_hash };
@@ -47,7 +50,9 @@ class UserModelClass {
     const existing = await this.getById(id);
     if (!existing) return null;
 
-    const email = updates.email ?? existing.email;
+    // Toujours stockée en minuscules pour garantir l'unicité et la cohérence
+    // avec la recherche insensible à la casse (findByEmailWithHash).
+    const email = (updates.email ?? existing.email).trim().toLowerCase();
     const nom = updates.nom ?? existing.nom;
     const role = updates.role ?? existing.role;
     const telephone = updates.telephone ?? existing.telephone ?? null;
@@ -102,12 +107,14 @@ class UserModelClass {
   }): Promise<AppUser> {
     const id = await this.generateNextId();
     const passwordHash = await bcrypt.hash(data.password, 10);
+    // Normalisée en minuscules à l'écriture (voir aussi la lecture dans findByEmailWithHash).
+    const normalizedEmail = data.email.trim().toLowerCase();
 
     const result = await pool.query(
       `INSERT INTO users (id, email, password_hash, nom, role, telephone, matricule)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [id, data.email, passwordHash, data.nom, data.role, data.telephone || null, data.matricule || null]
+      [id, normalizedEmail, passwordHash, data.nom, data.role, data.telephone || null, data.matricule || null]
     );
 
     return mapRowToUser(result.rows[0]);
