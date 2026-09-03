@@ -51,8 +51,8 @@ router.delete('/users/:id', requireAdmin, deleteUser);
 // Resources
 router.get('/ressources', getRessources);
 router.get('/ressources/:id', getRessourceById);
-router.put('/ressources/:id', updateRessource);
-router.delete('/ressources/:id', deleteRessource);
+router.put('/ressources/:id', requireAdmin, updateRessource);
+router.delete('/ressources/:id', requireAdmin, deleteRessource);
 
 // Affectations
 router.get('/affectations', getAffectations);
@@ -62,7 +62,7 @@ router.post('/disponibilite', checkDisponibilite);
 
 // Displayed HR functions configuration
 router.get('/fonctions', getFonctionsConfig);
-router.put('/fonctions', updateFonctionsConfig);
+router.put('/fonctions', requireAdmin, updateFonctionsConfig);
 
 // Statistics
 router.get('/stats', getStats);

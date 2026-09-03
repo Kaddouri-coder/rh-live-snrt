@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { RessourceHumaine, Affectation } from '../types';
+import { useAuth } from '../context/AuthContext';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -34,7 +35,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   fonctionsAffichees: externalFonctionsAffichees,
   onUpdateFonctionsAffichees,
 }) => {
-    // Liste des fonctions réellement présentes dans les ressources (dynamique),
+    const { currentUser } = useAuth();
+  const isAdmin = currentUser?.role === 'admin';
+
+  // Liste des fonctions réellement présentes dans les ressources (dynamique),
   // au lieu d'une liste statique qui peut être désynchronisée de la base.
   const allAvailableFonctions = Array.from(
     new Set(ressources.map((r) => r.fonction).filter(Boolean))
@@ -304,15 +308,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             ))}
           </select>
 
-          <button
-            type="button"
-            onClick={() => setIsConfigModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-all shadow-2xs"
-            title="Gérer les fonctions RH affichées"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            Paramétrage des fonctions ({activeFonctions.length}/{allAvailableFonctions.length})
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setIsConfigModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-all shadow-2xs"
+              title="Gérer les fonctions RH affichées"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              Paramétrage des fonctions ({activeFonctions.length}/{allAvailableFonctions.length})
+            </button>
+          )}
         </div>
 
         <div className="flex items-center space-x-3 text-[11px] font-semibold">

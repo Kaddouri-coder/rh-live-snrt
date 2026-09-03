@@ -1,5 +1,6 @@
 import React from 'react';
 import { StatsGlobales, FiltresRecherche } from '../types';
+import { getNowDateTimeStr } from '../../shared/utils/dateHelpers';
 import {
   Users,
   CheckCircle2,
@@ -137,8 +138,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onNavigateToRecherche({
                 fonction: 'Cameraman',
                 chaine: 'Al Aoula',
-                dateDebut: '2026-08-10T09:00',
-                dateFin: '2026-08-10T14:00',
+                dateDebut: getNowDateTimeStr(9, 0),
+                dateFin: getNowDateTimeStr(14, 0)
               })
             }
             className="bg-white hover:bg-emerald-50 text-left p-3 rounded-lg border border-slate-200 hover:border-emerald-300 shadow-xs transition-all group"

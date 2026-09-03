@@ -3,6 +3,7 @@ import { Search, Calendar, Clock, Filter, RotateCcw, Sparkles } from 'lucide-rea
 import { FiltresRecherche } from '../types';
 import { CHAINES_LIST, DIRECTIONS_LIST, FONCTIONS_LIST } from '../data/constants';
 import { SearchableSelect } from './SearchableSelect';
+import { getNowDateTimeStr } from '../../shared/utils/dateHelpers';
 
 interface SearchFiltersProps {
   filtres: FiltresRecherche;
@@ -58,14 +59,14 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               onApplyPreset({
                 fonction: 'Cameraman',
                 chaine: 'Al Aoula',
-                dateDebut: '2026-08-10T09:00',
-                dateFin: '2026-08-10T14:00',
+                dateDebut: getNowDateTimeStr(9, 0),
+                dateFin: getNowDateTimeStr(14, 0),
                 etat: 'Disponible',
               })
             }
             className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
           >
-            Cameramen Al Aoula (10/08 09h-14h)
+            Cameramen Al Aoula (aujourd'hui 09h-14h)
           </button>
           <button
             type="button"

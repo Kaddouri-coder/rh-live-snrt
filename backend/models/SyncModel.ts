@@ -22,9 +22,27 @@ class SyncModelClass {
     });
   }
 
-  public async getStats(): Promise<StatsGlobales> {
+  public async getStats(dateDebut?: string, dateFin?: string): Promise<StatsGlobales> {
     const ressources = await RessourceModel.getAll();
-    const affectations = await AffectationModel.getAll();
+    const allAffectations = await AffectationModel.getAll();
+
+    // Si une période valide est fournie, on ne garde que les affectations qui
+    // la chevauchent (mêmes règles que la recherche de disponibilité) au lieu
+    // de calculer sur tout l'historique.
+    const periodStart = dateDebut ? new Date(dateDebut) : null;
+    const periodEnd = dateFin ? new Date(dateFin) : null;
+    const hasValidPeriod = !!(
+      periodStart &&
+      periodEnd &&
+      !isNaN(periodStart.getTime()) &&
+      !isNaN(periodEnd.getTime())
+    );
+
+    const affectations = hasValidPeriod
+      ? allAffectations.filter((a) =>
+          hasTimeOverlap(periodStart as Date, periodEnd as Date, new Date(a.dateDebut), new Date(a.dateFin))
+        )
+      : allAffectations;
 
     const totalRessources = ressources.length;
     const totalAffectations = affectations.length;
