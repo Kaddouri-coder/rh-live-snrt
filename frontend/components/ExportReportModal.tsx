@@ -169,6 +169,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
 
               <button
                 onClick={onClose}
+                aria-label="Fermer l'aperçu du rapport"
                 className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />

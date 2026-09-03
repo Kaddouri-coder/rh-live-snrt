@@ -178,7 +178,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <p className="text-[11px] text-slate-400">Gestion des comptes utilisateurs</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+          <button onClick={onClose} aria-label="Fermer l'administration" className="text-slate-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -241,6 +241,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   onClick={() => setShowPassword((v) => !v)}
                   tabIndex={-1}
                   title={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

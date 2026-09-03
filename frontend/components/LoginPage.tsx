@@ -99,6 +99,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     onClick={() => setShowPassword((v) => !v)}
                     tabIndex={-1}
                     title={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -156,6 +157,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </span>
               <span className="text-[10px] font-bold tracking-widest text-rose-300 uppercase">En direct</span>
               <span className="text-sm text-white tabular-nums tracking-wider ml-1">{timeString}</span>
+              <div className="flex items-end gap-0.5 h-3 ml-1" aria-hidden="true">
+                {[0, 0.15, 0.3, 0.15, 0].map((delay, i) => (
+                  <span
+                    key={i}
+                    className="waveform-bar w-0.5 bg-emerald-400/70 rounded-full h-full"
+                    style={{ animationDelay: `${delay}s` }}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Logo SNRT anime (flottant), en echo au metier broadcast */}

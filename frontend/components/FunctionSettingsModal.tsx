@@ -89,6 +89,7 @@ export const FunctionSettingsModal: React.FC<FunctionSettingsModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            aria-label="Fermer le paramétrage des fonctions"
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />

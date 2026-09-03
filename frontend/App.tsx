@@ -13,6 +13,7 @@ import { AdminPanel } from './components/AdminPanel';
 import * as api from './services/api';
 import { useAuth } from './context/AuthContext';
 import { getNowDateTimeStr } from '../shared/utils/dateHelpers';
+import { ToastContainer, ToastItem, ToastType } from './components/Toast';
 
 import {
   FiltresRecherche,
@@ -67,6 +68,17 @@ export default function App() {
 
   const [isExportReportOpen, setIsExportReportOpen] = useState<boolean>(false);
 
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  const showToast = (message: string, type: ToastType = 'error') => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    setToasts((prev) => [...prev, { id, type, message }]);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
   const fetchAvailability = async (currentFiltres = filtres) => {
     try {
       setIsLoading(true);
@@ -74,6 +86,7 @@ export default function App() {
       setResultatsDispo(resultats);
     } catch (err) {
       console.error('Erreur API disponibilite:', err);
+      showToast('Impossible de charger les résultats de disponibilité. Réessayez.');
     } finally {
       setIsLoading(false);
     }
@@ -98,11 +111,15 @@ export default function App() {
   };
 
   const handleUpdateFonctionsAffichees = async (newFonctions: string[]) => {
+    const previous = fonctionsAffichees;
     try {
       setFonctionsAffichees(newFonctions);
       await api.updateFonctionsAffichees(newFonctions);
+      showToast('Paramétrage des fonctions enregistré.', 'success');
     } catch (err) {
       console.error('Erreur sauvegarde fonctions:', err);
+      setFonctionsAffichees(previous);
+      showToast("Échec de l'enregistrement du paramétrage des fonctions.");
     }
   };
 
@@ -154,6 +171,7 @@ export default function App() {
 
     socket.onerror = (err) => {
       console.error('Erreur WebSocket:', err);
+      showToast('Connexion temps réel interrompue : les mises à jour automatiques peuvent être retardées.', 'info');
     };
 
     return () => {
@@ -211,6 +229,7 @@ export default function App() {
       }
     } catch (err) {
       console.error('Erreur fiche ressource:', err);
+      showToast('Impossible de charger la fiche de cette ressource.');
     }
   };
 
@@ -233,7 +252,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200 flex selection:bg-emerald-500 selection:text-white transition-colors">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -246,7 +265,7 @@ export default function App() {
       <div className="flex-1 min-w-0 flex flex-col">
       {/* Barre supérieure visible uniquement sur mobile, avec le bouton menu */}
       <div className="md:hidden sticky top-0 z-20 bg-slate-900 text-white flex items-center gap-3 px-4 py-3 shadow-sm">
-        <button onClick={() => setIsSidebarOpen(true)} className="p-1.5 -ml-1.5 text-slate-300 hover:text-white">
+        <button onClick={() => setIsSidebarOpen(true)} aria-label="Ouvrir le menu" className="p-1.5 -ml-1.5 text-slate-300 hover:text-white">
           <Menu className="w-5 h-5" />
         </button>
         <div className="w-7 h-7 rounded-md bg-white flex items-center justify-center shrink-0 p-1">
@@ -288,9 +307,9 @@ export default function App() {
             />
 
             {isLoading ? (
-              <div className="bg-white rounded-xl p-12 text-center border border-slate-200">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-12 text-center border border-slate-200 dark:border-slate-800">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                   Calcul de la disponibilité RH en cours...
                 </p>
               </div>
@@ -324,7 +343,7 @@ export default function App() {
         )}
       </main>
 
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
         <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
             Application de consultation de la disponibilité des Ressources Humaines • <strong>RH Live</strong>
@@ -366,6 +385,8 @@ export default function App() {
       {isAdminPanelOpen && (
         <AdminPanel onClose={() => setIsAdminPanelOpen(false)} />
       )}
+
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

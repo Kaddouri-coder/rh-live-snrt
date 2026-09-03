@@ -32,6 +32,7 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
         <div className="bg-rose-900 text-white p-5 relative">
           <button
             onClick={onClose}
+            aria-label="Fermer les détails de l'affectation"
             className="absolute top-4 right-4 p-1.5 rounded-full bg-rose-950/60 hover:bg-rose-950 text-rose-200 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />

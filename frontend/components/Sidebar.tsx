@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Calendar, LayoutDashboard, Search, FileText, ShieldCheck, LogOut, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Calendar, LayoutDashboard, Search, FileText, ShieldCheck, LogOut, X, ChevronsLeft, ChevronsRight, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 interface SidebarProps {
   activeTab: 'dashboard' | 'recherche' | 'calendrier';
@@ -20,6 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
 }) => {
   const { currentUser, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   // Réduit la sidebar à une bande d'icônes sur desktop (n'affecte pas le tiroir mobile).
   const [isCollapsed, setIsCollapsed] = useState(false);
   if (!currentUser) return null;
@@ -61,7 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="text-[10px] text-slate-500 truncate">Disponibilité RH — SNRT</div>
           </div>
-          <button onClick={onClose} className="md:hidden text-slate-400 hover:text-white p-1">
+          <button onClick={onClose} aria-label="Fermer le menu" className="md:hidden text-slate-400 hover:text-white p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -70,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => setIsCollapsed((v) => !v)}
           title={isCollapsed ? 'Agrandir le menu' : 'Réduire le menu'}
+          aria-label={isCollapsed ? 'Agrandir le menu' : 'Réduire le menu'}
           className={`hidden md:flex items-center gap-2 px-3 py-2 mx-3 mt-2 text-[11px] font-medium text-slate-500 hover:text-slate-200 hover:bg-slate-800/70 rounded-full transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
@@ -137,6 +140,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           </div>
+          <button
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Passer au mode clair' : 'Passer au mode sombre'}
+            aria-label={theme === 'dark' ? 'Passer au mode clair' : 'Passer au mode sombre'}
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 mb-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/70 transition-all ${
+              isCollapsed ? 'md:justify-center md:px-0' : ''
+            }`}
+          >
+            {theme === 'dark' ? <Sun className="w-3.5 h-3.5 shrink-0" /> : <Moon className="w-3.5 h-3.5 shrink-0" />}
+            <span className={isCollapsed ? 'md:hidden' : ''}>
+              {theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            </span>
+          </button>
           <button
             onClick={logout}
             title="Déconnexion"

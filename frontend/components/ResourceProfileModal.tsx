@@ -43,6 +43,7 @@ export const ResourceProfileModal: React.FC<ResourceProfileModalProps> = ({
         <div className="bg-slate-900 text-white p-6 relative">
           <button
             onClick={onClose}
+            aria-label="Fermer la fiche ressource"
             className="absolute top-4 right-4 p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />

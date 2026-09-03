@@ -109,6 +109,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
+                  aria-label="Effacer la recherche"
                   className="absolute right-2 top-2 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-3.5 h-3.5" />
