@@ -44,9 +44,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   };
 
   // Styles "neumorphism" (relief doux) réutilisés pour la carte, les champs et le bouton.
+  // Les couleurs elles-mêmes (inline style) ne peuvent pas utiliser dark: de Tailwind,
+  // donc on choisit la palette ici selon le thème actif.
   const neumoBg = '#E6EAF2';
   const neumoRaised = { boxShadow: '10px 10px 20px #b7bfcc, -10px -10px 20px #ffffff' };
   const neumoInset = { boxShadow: 'inset 6px 6px 12px #b7bfcc, inset -6px -6px 12px #ffffff' };
+  const neumoPressed = 'inset 4px 4px 8px #b7bfcc, inset -4px -4px 8px #ffffff';
 
   return (
     <div className="h-screen flex flex-col md:flex-row overflow-hidden">
@@ -108,7 +111,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </div>
 
               {error && (
-                <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-3 text-xs font-medium">
+                <div className="flex items-start gap-2 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 rounded-2xl p-3 text-xs font-medium">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
@@ -118,8 +121,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full group flex items-center justify-center gap-2 text-slate-800 text-base font-semibold py-4 rounded-full transition-all duration-150 active:shadow-none disabled:opacity-60 mt-3"
-                style={neumoRaised}
-                onMouseDown={(e) => (e.currentTarget.style.boxShadow = 'inset 4px 4px 8px #b7bfcc, inset -4px -4px 8px #ffffff')}
+                style={{ background: neumoBg, ...neumoRaised }}
+                onMouseDown={(e) => (e.currentTarget.style.boxShadow = neumoPressed)}
                 onMouseUp={(e) => (e.currentTarget.style.boxShadow = neumoRaised.boxShadow)}
               >
                 <span>{isSubmitting ? 'Connexion...' : 'Se connecter'}</span>

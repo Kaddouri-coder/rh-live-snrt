@@ -6,8 +6,6 @@ import {
   CheckCircle2,
   XCircle,
   TrendingUp,
-  Tv,
-  Briefcase,
   Search,
   Sparkles,
   ArrowRight,

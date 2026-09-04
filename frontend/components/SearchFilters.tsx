@@ -40,17 +40,17 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 md:p-6 mb-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-2">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 md:p-6 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-800 gap-2">
         <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-emerald-600" />
-          <h2 className="text-base font-bold text-slate-800">
+          <Filter className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
             Critères de recherche de disponibilité RH
           </h2>
         </div>
 
         <div className="flex items-center space-x-2 overflow-x-auto py-1">
-          <span className="text-xs text-slate-500 flex items-center gap-1 font-medium whitespace-nowrap">
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium whitespace-nowrap">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Raccourcis :
           </span>
           <button
@@ -64,7 +64,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Disponible',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 transition-colors whitespace-nowrap"
           >
             Cameramen Al Aoula (aujourd'hui 09h-14h)
           </button>
@@ -77,7 +77,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Disponible',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 transition-colors whitespace-nowrap"
           >
             Réalisateurs Disponibles
           </button>
@@ -90,7 +90,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 etat: 'Tous',
               })
             }
-            className="text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition-colors whitespace-nowrap"
+            className="text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 transition-colors whitespace-nowrap"
           >
             Effectif Arryadia
           </button>
@@ -104,31 +104,31 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         }}
         className="space-y-4"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/80 p-3.5 rounded-lg border border-slate-200/80">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/80 dark:bg-slate-800/40 p-3.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center space-x-1.5">
-              <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1.5">
+              <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Date et heure de début <span className="text-rose-500">*</span></span>
             </label>
             <input
               type="datetime-local"
               value={filtres.dateDebut}
               onChange={(e) => handleChange('dateDebut', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm [color-scheme:light] dark:[color-scheme:dark]"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center space-x-1.5">
-              <Clock className="w-3.5 h-3.5 text-emerald-600" />
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1.5">
+              <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Date et heure de fin <span className="text-rose-500">*</span></span>
             </label>
             <input
               type="datetime-local"
               value={filtres.dateFin}
               onChange={(e) => handleChange('dateFin', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm [color-scheme:light] dark:[color-scheme:dark]"
               required
             />
           </div>
@@ -136,13 +136,13 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Chaîne
             </label>
             <select
               value={filtres.chaine}
               onChange={(e) => handleChange('chaine', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
             >
               {CHAINES_LIST.map((chaine) => (
                 <option key={chaine} value={chaine}>
@@ -153,7 +153,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Direction de rattachement
             </label>
             <SearchableSelect
@@ -164,7 +164,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Fonction
             </label>
             <SearchableSelect
@@ -175,7 +175,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Nom, prénom ou matricule
             </label>
             <div className="relative">
@@ -184,7 +184,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 value={filtres.nomRecherche}
                 onChange={(e) => handleChange('nomRecherche', e.target.value)}
                 placeholder="Ex: Amrani, Youssef, SNRT..."
-                className="w-full bg-white border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
             </div>
@@ -193,15 +193,15 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-semibold text-slate-700 mr-1">État :</span>
-            <div className="inline-flex bg-slate-100 p-1 rounded-full border border-slate-200">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 mr-1">État :</span>
+            <div className="inline-flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={() => handleChange('etat', 'Tous')}
                 className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Tous'
-                    ? 'bg-white text-slate-800 shadow-sm font-semibold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 Tous ({totalResultats})
@@ -212,7 +212,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Disponible'
                     ? 'bg-emerald-600 text-white shadow-sm font-semibold'
-                    : 'text-emerald-700 hover:bg-emerald-50'
+                    : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10'
                 }`}
               >
                 Disponible ({nbDisponibles})
@@ -223,7 +223,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                   filtres.etat === 'Occupée'
                     ? 'bg-rose-600 text-white shadow-sm font-semibold'
-                    : 'text-rose-700 hover:bg-rose-50'
+                    : 'text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10'
                 }`}
               >
                 Occupée ({nbOccupees})
@@ -235,7 +235,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex items-center space-x-1 px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full border border-slate-200 transition-colors"
+              className="inline-flex items-center space-x-1 px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full border border-slate-200 dark:border-slate-700 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Réinitialiser</span>

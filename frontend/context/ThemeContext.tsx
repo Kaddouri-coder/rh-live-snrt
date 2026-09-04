@@ -14,7 +14,9 @@ const STORAGE_KEY = 'mplanner_theme';
 function getInitialTheme(): Theme {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === 'light' || stored === 'dark') return stored;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  // Pas de préférence enregistrée : on démarre toujours en clair par défaut
+  // (on ne suit plus la préférence système).
+  return 'light';
 }
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

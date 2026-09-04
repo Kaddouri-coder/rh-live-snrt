@@ -28,7 +28,7 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="bg-rose-900 text-white p-5 relative">
           <button
             onClick={onClose}
@@ -57,56 +57,56 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
 
         <div className="p-5 space-y-4 text-xs">
           {ressource && (
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <p className="text-[11px] text-slate-500 font-medium">Ressource affectée</p>
-                <p className="font-bold text-slate-900 text-sm">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Ressource affectée</p>
+                <p className="font-bold text-slate-900 dark:text-white text-sm">
                   {ressource.prenom} {ressource.nom}
                 </p>
-                <p className="text-xs text-emerald-700 font-semibold">{ressource.fonction}</p>
+                <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">{ressource.fonction}</p>
               </div>
-              <span className="text-[10px] font-mono bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-0.5 rounded">
                 {ressource.matricule}
               </span>
             </div>
           )}
 
-          <div className="bg-amber-50/80 p-3.5 rounded-xl border border-amber-200 space-y-2 text-slate-800">
-            <div className="flex items-center space-x-2 font-semibold text-amber-900">
-              <Clock className="w-4 h-4 text-amber-600" />
+          <div className="bg-amber-50/80 dark:bg-amber-500/10 p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/60 space-y-2 text-slate-800 dark:text-slate-200">
+            <div className="flex items-center space-x-2 font-semibold text-amber-900 dark:text-amber-400">
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>Plage d'affectation :</span>
             </div>
             <div className="pl-6 space-y-1 text-xs">
               <div>
-                Début : <strong className="text-slate-900">{formatDate(affectation.dateDebut)}</strong>
+                Début : <strong className="text-slate-900 dark:text-white">{formatDate(affectation.dateDebut)}</strong>
               </div>
               <div>
-                Fin : <strong className="text-slate-900">{formatDate(affectation.dateFin)}</strong>
+                Fin : <strong className="text-slate-900 dark:text-white">{formatDate(affectation.dateFin)}</strong>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
-                <Tv className="w-3.5 h-3.5 text-emerald-600" /> Chaîne
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                <Tv className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Chaîne
               </span>
-              <p className="font-bold text-slate-900 mt-1">{affectation.chaine}</p>
+              <p className="font-bold text-slate-900 dark:text-white mt-1">{affectation.chaine}</p>
             </div>
 
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Studio / Lieu
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Studio / Lieu
               </span>
-              <p className="font-bold text-slate-900 mt-1">{affectation.lieu}</p>
+              <p className="font-bold text-slate-900 dark:text-white mt-1">{affectation.lieu}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-50 p-4 border-t border-slate-200 flex items-center justify-end">
+        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors"
+            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-semibold rounded-lg transition-colors"
           >
             Fermer
           </button>

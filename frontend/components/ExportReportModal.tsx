@@ -149,7 +149,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
         onClick={onClose}
       >
         <div
-          className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-4xl w-full overflow-hidden my-8"
+          className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-800 dark:border-slate-800 shadow-2xl max-w-4xl w-full overflow-hidden my-8"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="sticky top-0 z-10 bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
