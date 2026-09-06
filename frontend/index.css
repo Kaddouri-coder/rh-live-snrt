@@ -1,5 +1,22 @@
 @import "tailwindcss";
+
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* RH Live — Neon Human Mesh : identité visuelle unique et permanente
+   (plus de bascule clair/sombre — ce thème est sombre par nature).
+   Fond quasi-noir teinté bleu pétrole ; Signal Lime en signature ;
+   cyan pour les connexions/données en transit ; violet en accent tertiaire. */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, sans-serif;
+  --color-ink: #05080b;
+  --color-ink-panel: #0d1217;
+  --color-ink-raised: #10171d;
+  --color-lime: #b7ff4a;
+  --color-lime-foreground: #071008;
+  --color-cyan: #58d5ff;
+  --color-violet: #a58cff;
+}
 
 /* Animation "equalizer" pour la decoration waveform de la page de connexion */
 @keyframes waveform-pulse {
@@ -37,4 +54,197 @@
   #root {
     display: none !important;
   }
+}
+
+.mesh-visual {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  background: #071015;
+  border: 1px solid rgba(102, 161, 163, 0.15);
+}
+.mesh-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.34;
+  background-image:
+    linear-gradient(rgba(112, 189, 193, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(112, 189, 193, 0.1) 1px, transparent 1px);
+  background-size: 45px 45px;
+  mask-image: linear-gradient(transparent 0%, black 18%, black 74%, transparent 100%);
+}
+.mesh-orbit {
+  position: absolute;
+  border: 1px solid rgba(91, 220, 221, 0.38);
+  border-radius: 50%;
+  transform: rotate(-22deg);
+}
+.orbit-one { width: 48%; height: 77%; left: 25%; top: 11%; }
+.orbit-two { width: 74%; height: 38%; left: 13%; top: 30%; transform: rotate(22deg); border-color: rgba(183, 255, 74, 0.3); }
+.orbit-three { width: 34%; height: 92%; left: 34%; top: 3%; transform: rotate(52deg); border-color: rgba(165, 140, 255, 0.24); }
+.mesh-sweep {
+  position: absolute;
+  width: 54%;
+  height: 1px;
+  left: 23%;
+  top: 51%;
+  background: linear-gradient(90deg, transparent, var(--color-lime), transparent);
+  filter: drop-shadow(0 0 7px rgba(183, 255, 74, 0.7));
+  animation: mesh-sweep 4.5s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+@keyframes mesh-sweep {
+  0% { transform: translateX(-65%) scaleX(0.65); opacity: 0; }
+  20% { opacity: 0.8; }
+  65% { opacity: 0.8; }
+  100% { transform: translateX(65%) scaleX(0.65); opacity: 0; }
+}
+.org-node {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #a9b8bb;
+  background: transparent;
+  text-align: left;
+  transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.org-node:hover { color: #f0f7f1; transform: translateY(-2px) scale(1.02); }
+.node-core {
+  position: relative;
+  display: block;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--node-color);
+  border-radius: 50%;
+  background: rgba(4, 12, 14, 0.8);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--node-color) 70%, transparent), 0 0 24px color-mix(in srgb, var(--node-color) 30%, transparent);
+}
+.node-pulse {
+  position: absolute;
+  left: -4px;
+  width: 19px;
+  height: 19px;
+  border: 1px solid var(--node-color);
+  border-radius: 50%;
+  opacity: 0.35;
+  animation: mesh-node-pulse 2.6s ease-out infinite;
+}
+@keyframes mesh-node-pulse {
+  0% { transform: scale(0.65); opacity: 0.42; }
+  75%, 100% { transform: scale(1.8); opacity: 0; }
+}
+.node-lime { --node-color: var(--color-lime); }
+.node-cyan { --node-color: var(--color-cyan); }
+.node-top { top: 12%; left: 45%; flex-direction: column-reverse; align-items: center; }
+.node-left { top: 42%; left: 8%; }
+.node-right { top: 38%; right: 8%; flex-direction: row-reverse; }
+.node-bottom-left { bottom: 13%; left: 20%; }
+.node-bottom-right { right: 18%; bottom: 12%; flex-direction: row-reverse; }
+.mesh-center-label {
+  position: absolute;
+  z-index: 3;
+  top: 40%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* RH Live — fond d'ambiance plein écran : constellation de particules (Canvas
+   2D, pas de WebGL) évoquant un flux de ressources humaines dans la nuit.
+   Les 9 pins représentent les fonctions SNRT réelles (voir FONCTIONS_LIST) et
+   sont alimentées par stats.parFonction (App.tsx) — glow actif seulement pour
+   les fonctions qui ont réellement des ressources suivies. */
+.snrt-background-layer {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: screen;
+}
+.snrt-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.snrt-dunes {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 9, 0.88) 0%, rgba(3, 8, 11, 0.55) 42%, rgba(3, 8, 11, 0.18) 100%),
+    url('/sahara-human-flow.webp');
+  background-size: cover;
+  background-position: center right;
+  filter: saturate(0.9) contrast(1.05);
+  animation: dune-drift 32s ease-in-out infinite alternate;
+}
+@keyframes dune-drift {
+  from { transform: scale(1.04) translate3d(-1%, 0, 0); }
+  to { transform: scale(1.08) translate3d(1%, -0.6%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snrt-dunes { animation: none; }
+}
+.role-constellation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.role-pin {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  color: rgba(211, 231, 229, 0.78);
+  border: 1px solid rgba(126, 185, 190, 0.18);
+  border-radius: 999px;
+  background: rgba(4, 11, 14, 0.4);
+  box-shadow: 0 0 18px rgba(88, 213, 255, 0.05);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  animation: role-float 6s ease-in-out infinite alternate;
+}
+.role-pin i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--role-color);
+  box-shadow: 0 0 9px var(--role-color);
+}
+.role-pin-count {
+  font-weight: 700;
+  color: var(--role-color);
+}
+.role-pin-lime { --role-color: var(--color-lime); border-color: rgba(183, 255, 74, 0.22); }
+.role-pin-muted { --role-color: #5f7379; border-color: rgba(126, 185, 190, 0.12); opacity: 0.55; }
+.role-pin:nth-child(2n) { animation-delay: -1.7s; }
+.role-pin:nth-child(3n) { animation-delay: -3.4s; }
+.role-pin:nth-child(4n) { animation-delay: -4.8s; }
+@keyframes role-float {
+  from { transform: translate(-50%, -50%) translateY(0); }
+  to { transform: translate(-50%, -50%) translateY(-6px); }
+}
+@media (max-width: 640px) {
+  .snrt-background-layer { opacity: 0.43; }
+  .role-pin { padding: 3px 5px; font-size: 7px; }
+  .role-pin:nth-child(2n), .role-pin:nth-child(3n), .role-pin:nth-child(4n) { animation: none; }
+  .role-pin:nth-child(n + 6) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snrt-background-layer { opacity: 0.3; }
+  .role-pin { animation: none; }
 }

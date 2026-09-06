@@ -15,7 +15,6 @@ import { FunctionSettingsModal } from './FunctionSettingsModal';
 import { SearchableSelect } from './SearchableSelect';
 import { getTodayStr, getDateStrPlusDays } from '../../shared/utils/dateHelpers';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 
 interface CalendarViewProps {
   ressources: RessourceHumaine[];
@@ -146,36 +145,34 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 md:p-6 space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+    <div className="rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#101e1e]/70 to-[#090f13]/80 p-4 md:p-6 space-y-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400">
+          <div className="p-2.5 rounded-lg bg-lime/10 border border-lime/25 text-lime">
             <CalendarIcon className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-[#eef3f4] flex items-center gap-2 tracking-tight">
               Vue Calendrier RH & Occupations
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 capitalize">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-lime/10 text-lime border border-lime/30 capitalize">
                 {modeVue === 'jour' && 'Journée'}
                 {modeVue === 'semaine' && 'Semaine'}
                 {modeVue === 'mois' && 'Mois'}
                 {modeVue === 'periode' && 'Période Personnalisée'}
               </span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-[#6e7c84]">
               Visualisation temporelle des créneaux occupés et des plages de disponibilité
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center bg-white/[0.03] p-1 rounded-lg border border-white/[0.08]">
             <button
               onClick={() => setModeVue('jour')}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                modeVue === 'jour'
-                  ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                modeVue === 'jour' ? 'bg-white/[0.09] text-[#eef3f4]' : 'text-[#6e7c84] hover:text-[#c1cdcf]'
               }`}
             >
               Journée
@@ -183,9 +180,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <button
               onClick={() => setModeVue('semaine')}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                modeVue === 'semaine'
-                  ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                modeVue === 'semaine' ? 'bg-white/[0.09] text-[#eef3f4]' : 'text-[#6e7c84] hover:text-[#c1cdcf]'
               }`}
             >
               Semaine
@@ -193,9 +188,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <button
               onClick={() => setModeVue('mois')}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                modeVue === 'mois'
-                  ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                modeVue === 'mois' ? 'bg-white/[0.09] text-[#eef3f4]' : 'text-[#6e7c84] hover:text-[#c1cdcf]'
               }`}
             >
               Mois
@@ -203,9 +196,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <button
               onClick={() => setModeVue('periode')}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                modeVue === 'periode'
-                  ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                modeVue === 'periode' ? 'bg-white/[0.09] text-[#eef3f4]' : 'text-[#6e7c84] hover:text-[#c1cdcf]'
               }`}
             >
               Par Période
@@ -213,10 +204,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {modeVue !== 'periode' && (
-            <div className="flex items-center space-x-1.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg p-1">
+            <div className="flex items-center space-x-1.5 bg-white/[0.025] border border-white/[0.08] rounded-lg p-1">
               <button
                 onClick={handlePrev}
-                className="p-1 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                className="p-1 text-[#8b98a0] hover:bg-white/[0.07] hover:text-[#eef3f4] rounded transition-colors"
                 title="Précédent"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -225,11 +216,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 type="date"
                 value={selectedDateStr}
                 onChange={(e) => setSelectedDateStr(e.target.value)}
-                className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-0.5 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
+                className="bg-white/[0.03] border border-white/[0.09] rounded px-2 py-0.5 text-xs font-bold text-[#eef3f4] focus:outline-none [color-scheme:dark]"
               />
               <button
                 onClick={handleNext}
-                className="p-1 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                className="p-1 text-[#8b98a0] hover:bg-white/[0.07] hover:text-[#eef3f4] rounded transition-colors"
                 title="Suivant"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -238,20 +229,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           )}
 
           {modeVue === 'periode' && (
-            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg p-1 text-xs">
-              <span className="text-slate-500 dark:text-slate-400 font-medium pl-1">Du</span>
+            <div className="flex items-center gap-2 bg-white/[0.025] border border-white/[0.08] rounded-lg p-1 text-xs">
+              <span className="text-[#6e7c84] font-medium pl-1">Du</span>
               <input
                 type="date"
                 value={periodStart}
                 onChange={(e) => setPeriodStart(e.target.value)}
-                className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-0.5 font-bold text-slate-800 dark:text-slate-100 focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
+                className="bg-white/[0.03] border border-white/[0.09] rounded px-2 py-0.5 font-bold text-[#eef3f4] focus:outline-none [color-scheme:dark]"
               />
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Au</span>
+              <span className="text-[#6e7c84] font-medium">Au</span>
               <input
                 type="date"
                 value={periodEnd}
                 onChange={(e) => setPeriodEnd(e.target.value)}
-                className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-0.5 font-bold text-slate-800 dark:text-slate-100 focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
+                className="bg-white/[0.03] border border-white/[0.09] rounded px-2 py-0.5 font-bold text-[#eef3f4] focus:outline-none [color-scheme:dark]"
               />
             </div>
           )}
@@ -259,35 +250,35 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       </div>
 
       {modeVue === 'periode' && (
-        <div className="flex flex-wrap items-center gap-2 bg-emerald-50/60 dark:bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800/60 text-xs">
-          <span className="font-semibold text-emerald-900 dark:text-emerald-300 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Périodes Rapides :
+        <div className="flex flex-wrap items-center gap-2 bg-lime/[0.06] p-2.5 rounded-lg border border-lime/20 text-xs">
+          <span className="font-semibold text-lime flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5" /> Périodes Rapides :
           </span>
           <button
             onClick={() => applyPresetPeriod(7)}
-            className="px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 rounded font-medium transition-colors"
+            className="px-2.5 py-1 bg-white/[0.04] hover:bg-lime/10 text-lime border border-lime/25 rounded font-medium transition-colors"
           >
             7 Prochains Jours
           </button>
           <button
             onClick={() => applyPresetPeriod(14)}
-            className="px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 rounded font-medium transition-colors"
+            className="px-2.5 py-1 bg-white/[0.04] hover:bg-lime/10 text-lime border border-lime/25 rounded font-medium transition-colors"
           >
             14 Jours (2 Semaines)
           </button>
           <button
             onClick={() => applyPresetPeriod(30)}
-            className="px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 rounded font-medium transition-colors"
+            className="px-2.5 py-1 bg-white/[0.04] hover:bg-lime/10 text-lime border border-lime/25 rounded font-medium transition-colors"
           >
             30 Jours (1 Mois)
           </button>
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200/80 dark:border-slate-700/80 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/[0.025] p-3 rounded-lg border border-white/[0.07] text-xs">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Filtrer les ressources :
+          <span className="font-semibold text-[#8b98a0] flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5 text-lime" /> Filtrer les ressources :
           </span>
 
           <SearchableSelect
@@ -300,20 +291,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           <select
             value={filterChaine}
             onChange={(e) => setFilterChaine(e.target.value)}
-            className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none"
+            className="bg-white/[0.03] border border-white/[0.09] rounded px-2.5 py-1 text-xs font-medium text-[#eef3f4] focus:outline-none"
           >
             {CHAINES_LIST.map((c) => (
-              <option key={c} value={c}>
+              <option key={c} value={c} className="bg-[#0d1217]">
                 {c}
               </option>
             ))}
-          </select>
+                      </select>
 
           {isAdmin && (
             <button
               type="button"
               onClick={() => setIsConfigModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-all shadow-2xs"
+              className="flex items-center gap-1.5 px-3 py-1 bg-lime hover:bg-[#c4ff69] text-[#0a1109] rounded-md text-xs font-bold transition-all"
               title="Gérer les fonctions RH affichées"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -323,11 +314,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         </div>
 
         <div className="flex items-center space-x-3 text-[11px] font-semibold">
-          <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
-            <span className="w-2.5 h-2.5 bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-400 dark:border-emerald-600 rounded-xs inline-block"></span>
+          <span className="flex items-center gap-1 text-lime">
+            <span className="w-2.5 h-2.5 bg-lime/15 border border-lime/50 rounded-xs inline-block"></span>
             Plage Libre
           </span>
-          <span className="flex items-center gap-1 text-rose-800 dark:text-rose-400">
+          <span className="flex items-center gap-1 text-rose-400">
             <span className="w-2.5 h-2.5 bg-rose-500 rounded-xs inline-block"></span>
             Occupée
           </span>
@@ -335,114 +326,187 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       </div>
 
       {modeVue === 'jour' && (
-        <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
-          <table className="w-full text-left border-collapse min-w-[900px]">
-            <thead>
-              <tr className="bg-slate-800 text-slate-200 text-xs font-semibold">
-                <th className="py-2.5 px-3 border-b border-slate-700 w-52 sticky left-0 bg-slate-800 z-10">
-                  Ressource Humaine
-                </th>
-                {hours.map((h) => (
-                  <th
-                    key={h}
-                    className="py-2.5 px-1 border-b border-slate-700 text-center font-mono text-[11px] w-12"
-                  >
-                    {h < 10 ? `0${h}` : h}:00
+        <>
+          {/* Vue grille horaire — desktop/tablette (scroll horizontal acceptable ici) */}
+          <div className="hidden md:block overflow-x-auto border border-white/[0.09] rounded-xl">
+            <table className="w-full text-left border-collapse min-w-[900px]">
+              <thead>
+                <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
+                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-52 sticky left-0 bg-[#0e1518] z-10">
+                    Ressource Humaine
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
-              {filteredRessources.map((res) => {
-                const dayStart = new Date(`${selectedDateStr}T00:00:00.000`);
-                const dayEnd = new Date(`${selectedDateStr}T23:59:59.999`);
+                  {hours.map((h) => (
+                    <th
+                      key={h}
+                      className="py-2.5 px-1 border-b border-white/[0.08] text-center font-mono text-[11px] w-12"
+                    >
+                      {h < 10 ? `0${h}` : h}:00
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.05] text-xs">
+                {filteredRessources.map((res) => {
+                  const dayStart = new Date(`${selectedDateStr}T00:00:00.000`);
+                  const dayEnd = new Date(`${selectedDateStr}T23:59:59.999`);
 
-                const resAffectations = affectations.filter((aff) => {
+                  const resAffectations = affectations.filter((aff) => {
+                    if (aff.ressourceId !== res.id) return false;
+                    const aStart = new Date(aff.dateDebut);
+                    const aEnd = new Date(aff.dateFin);
+                    return aStart < dayEnd && aEnd > dayStart;
+                  });
+
+                  return (
+                    <tr key={res.id} className="hover:bg-white/[0.025] transition-colors">
+                      <td className="py-2.5 px-3 font-medium text-[#eef3f4] border-r border-white/[0.08] sticky left-0 bg-[#0e1518] z-10">
+                        <button
+                          onClick={() => onSelectResource(res)}
+                          className="text-left font-bold hover:text-lime transition-colors block text-xs"
+                        >
+                          {res.prenom} {res.nom}
+                        </button>
+                        <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
+                          <span>{res.fonction}</span>
+                          <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
+                            {res.chaineRattachement}
+                          </span>
+                        </div>
+                      </td>
+
+                      {hours.map((hour) => {
+                        const slotStart = new Date(
+                          `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:00:00.000`
+                        );
+                        const slotEnd = new Date(
+                          `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:59:59.999`
+                        );
+
+                        const matchingAff = resAffectations.find((aff) => {
+                          const affStart = new Date(aff.dateDebut);
+                          const affEnd = new Date(aff.dateFin);
+                          return slotStart < affEnd && slotEnd > affStart;
+                        });
+
+                        if (matchingAff) {
+                          return (
+                            <td
+                              key={hour}
+                              onClick={() => onSelectAffectation(matchingAff)}
+                              className="py-1 px-0.5 border-r border-white/[0.05] bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-[10px] text-center font-bold p-1 overflow-hidden"
+                              title={`OCCUPÉE : ${matchingAff.emissionNom} (${matchingAff.lieu}) - Cliquez pour détails`}
+                            >
+                              <div className="truncate px-0.5">{matchingAff.emissionNom.slice(0, 8)}..</div>
+                            </td>
+                          );
+                        }
+
+                        return (
+                          <td
+                            key={hour}
+                            className="py-2 px-0.5 border-r border-white/[0.05] bg-lime/[0.04] hover:bg-lime/10 transition-colors text-center text-[10px]"
+                            title={`LIBRE à ${hour}:00`}
+                          >
+                            <div className="w-1.5 h-1.5 bg-lime rounded-full mx-auto opacity-40"></div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Vue agenda verticale — mobile (pas de scroll horizontal) */}
+          <div className="md:hidden space-y-2">
+            {filteredRessources.length === 0 && (
+              <div className="text-center text-xs text-[#5f6d75] py-8 bg-white/[0.02] rounded-xl border border-white/[0.07]">
+                Aucune ressource ne correspond aux filtres actuels.
+              </div>
+            )}
+
+            {filteredRessources.map((res) => {
+              const dayStart = new Date(`${selectedDateStr}T00:00:00.000`);
+              const dayEnd = new Date(`${selectedDateStr}T23:59:59.999`);
+
+              const resAffectations = affectations
+                .filter((aff) => {
                   if (aff.ressourceId !== res.id) return false;
                   const aStart = new Date(aff.dateDebut);
                   const aEnd = new Date(aff.dateFin);
                   return aStart < dayEnd && aEnd > dayStart;
-                });
+                })
+                .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime());
 
-                return (
-                  <tr key={res.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors">
-                    <td className="py-2.5 px-3 font-medium text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 sticky left-0 bg-white dark:bg-slate-900 z-10 shadow-xs">
-                      <button
-                        onClick={() => onSelectResource(res)}
-                        className="text-left font-bold hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block text-xs"
-                      >
+              const isFree = resAffectations.length === 0;
+
+              return (
+                <div
+                  key={res.id}
+                  className="bg-white/[0.02] rounded-xl border border-white/[0.08] p-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <button onClick={() => onSelectResource(res)} className="text-left min-w-0">
+                      <div className="font-bold text-sm text-[#eef3f4] hover:text-lime transition-colors truncate">
                         {res.prenom} {res.nom}
-                      </button>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between mt-0.5">
-                        <span>{res.fonction}</span>
-                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1 rounded">
-                          {res.chaineRattachement}
-                        </span>
                       </div>
-                    </td>
+                      <div className="text-[11px] text-[#6e7c84] truncate">
+                        {res.fonction} · {res.chaineRattachement}
+                      </div>
+                    </button>
+                    {isFree ? (
+                      <span className="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full bg-lime/10 text-lime border border-lime/30">
+                        Libre
+                      </span>
+                    ) : (
+                      <span className="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                        {resAffectations.length} occ.
+                      </span>
+                    )}
+                  </div>
 
-                    {hours.map((hour) => {
-                      const slotStart = new Date(
-                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:00:00.000`
-                      );
-                      const slotEnd = new Date(
-                        `${selectedDateStr}T${hour < 10 ? '0' + hour : hour}:59:59.999`
-                      );
-
-                      const matchingAff = resAffectations.find((aff) => {
-                        const affStart = new Date(aff.dateDebut);
-                        const affEnd = new Date(aff.dateFin);
-                        return slotStart < affEnd && slotEnd > affStart;
-                      });
-
-                      if (matchingAff) {
-                        return (
-                          <td
-                            key={hour}
-                            onClick={() => onSelectAffectation(matchingAff)}
-                            className="py-1 px-0.5 border-r border-slate-100 dark:border-slate-800 bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-[10px] text-center font-bold p-1 overflow-hidden"
-                            title={`OCCUPÉE : ${matchingAff.emissionNom} (${matchingAff.lieu}) - Cliquez pour détails`}
-                          >
-                            <div className="truncate px-0.5">{matchingAff.emissionNom.slice(0, 8)}..</div>
-                          </td>
-                        );
-                      }
-
-                      return (
-                        <td
-                          key={hour}
-                          className="py-2 px-0.5 border-r border-slate-100 dark:border-slate-800 bg-emerald-50/40 dark:bg-emerald-500/5 hover:bg-emerald-100/50 dark:hover:bg-emerald-500/10 transition-colors text-center text-emerald-800 text-[10px]"
-                          title={`LIBRE à ${hour}:00`}
+                  {!isFree && (
+                    <div className="space-y-1.5 pt-2 mt-2 border-t border-white/[0.07]">
+                      {resAffectations.map((aff) => (
+                        <button
+                          key={aff.id}
+                          onClick={() => onSelectAffectation(aff)}
+                          className="w-full text-left flex items-center gap-2 text-xs bg-rose-500/[0.06] hover:bg-rose-500/10 border border-rose-500/20 rounded-lg px-2.5 py-2 transition-colors"
                         >
-                          <div className="w-1.5 h-1.5 bg-emerald-300 dark:bg-emerald-500 rounded-full mx-auto opacity-40"></div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                          <span className="font-mono text-[10px] font-bold text-rose-400 shrink-0">
+                            {new Date(aff.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}–
+                            {new Date(aff.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <span className="truncate text-[#c1cdcf] font-medium">{aff.emissionNom}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {modeVue === 'semaine' && (
         <div className="space-y-4">
-          <div className="bg-emerald-50/70 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-800/60 rounded-lg p-3 text-xs flex justify-between items-center text-emerald-900 dark:text-emerald-300 font-medium">
+          <div className="bg-lime/[0.06] border border-lime/20 rounded-lg p-3 text-xs flex justify-between items-center text-lime font-medium">
             <span>
               Semaine du <strong>{formatDateStr(weekDays[0])}</strong> au{' '}
               <strong>{formatDateStr(weekDays[6])}</strong>
             </span>
-            <span className="text-slate-500 dark:text-slate-400 text-[11px]">
+            <span className="text-[#6e7c84] text-[11px]">
               {filteredRessources.length} ressources filtrées
             </span>
           </div>
 
-          <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="overflow-x-auto border border-white/[0.09] rounded-xl">
             <table className="w-full text-left border-collapse min-w-[850px]">
               <thead>
-                <tr className="bg-slate-800 text-slate-200 text-xs font-semibold">
-                  <th className="py-2.5 px-3 border-b border-slate-700 w-52 sticky left-0 bg-slate-800 z-10">
+                <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
+                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-52 sticky left-0 bg-[#0e1518] z-10">
                     Ressource Humaine
                   </th>
                   {weekDays.map((day) => {
@@ -451,30 +515,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     return (
                       <th
                         key={dayStr}
-                        className={`py-2 px-2 border-b border-slate-700 text-center text-[11px] ${
-                          isSelected ? 'bg-slate-700 text-emerald-300 font-bold' : ''
+                        className={`py-2 px-2 border-b border-white/[0.08] text-center text-[11px] ${
+                          isSelected ? 'bg-lime/10 text-lime font-bold' : ''
                         }`}
                       >
                         <div className="capitalize">{day.toLocaleDateString('fr-FR', { weekday: 'short' })}</div>
-                        <div className="text-[10px] text-slate-300 font-mono">{day.getDate()} / {day.getMonth() + 1}</div>
+                        <div className="text-[10px] text-[#8b98a0] font-mono">{day.getDate()} / {day.getMonth() + 1}</div>
                       </th>
                     );
                   })}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+              <tbody className="divide-y divide-white/[0.05] text-xs">
                 {filteredRessources.map((res) => (
-                  <tr key={res.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors">
-                    <td className="py-2.5 px-3 font-medium text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 sticky left-0 bg-white dark:bg-slate-900 z-10 shadow-xs">
+                  <tr key={res.id} className="hover:bg-white/[0.025] transition-colors">
+                    <td className="py-2.5 px-3 font-medium text-[#eef3f4] border-r border-white/[0.08] sticky left-0 bg-[#0e1518] z-10">
                       <button
                         onClick={() => onSelectResource(res)}
-                        className="text-left font-bold hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block text-xs"
+                        className="text-left font-bold hover:text-lime transition-colors block text-xs"
                       >
                         {res.prenom} {res.nom}
                       </button>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between mt-0.5">
+                      <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                         <span>{res.fonction}</span>
-                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1 rounded">
+                        <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
                           {res.chaineRattachement}
                         </span>
                       </div>
@@ -494,13 +558,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                       if (dayAffectations.length > 0) {
                         return (
-                          <td key={dayStr} className="p-1 border-r border-slate-100 dark:border-slate-800 bg-rose-50/80 dark:bg-rose-500/10">
+                          <td key={dayStr} className="p-1 border-r border-white/[0.05] bg-rose-500/[0.08]">
                             <div className="space-y-1">
                               {dayAffectations.map((aff) => (
                                 <div
                                   key={aff.id}
                                   onClick={() => onSelectAffectation(aff)}
-                                  className="bg-rose-500 hover:bg-rose-600 transition-colors text-white text-[10px] p-1 rounded font-medium cursor-pointer shadow-2xs"
+                                  className="bg-rose-500 hover:bg-rose-600 transition-colors text-white text-[10px] p-1 rounded font-medium cursor-pointer"
                                   title={`${aff.emissionNom} (${aff.statut}) - Cliquez pour voir`}
                                 >
                                   <div className="font-bold truncate">{aff.emissionNom}</div>
@@ -513,8 +577,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       }
 
                       return (
-                        <td key={dayStr} className="p-2 border-r border-slate-100 dark:border-slate-800 bg-emerald-50/20 dark:bg-emerald-500/5 text-center">
-                          <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">Libre</span>
+                        <td key={dayStr} className="p-2 border-r border-white/[0.05] bg-lime/[0.03] text-center">
+                          <span className="text-[10px] text-lime font-medium">Libre</span>
                         </td>
                       );
                     })}
@@ -525,20 +589,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
         </div>
       )}
-
-      {modeVue === 'mois' && (
+            {modeVue === 'mois' && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 capitalize flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.03] p-3 rounded-lg border border-white/[0.08]">
+            <h3 className="text-sm font-semibold text-[#eef3f4] capitalize flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-lime" />
               Mois : {monthNameFr}
             </h3>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-slate-600 dark:text-slate-400 font-medium">Affichage :</span>
+              <span className="text-[#8b98a0] font-medium">Affichage :</span>
               <button
                 onClick={() => setMonthSubView('matrix')}
                 className={`px-2.5 py-1 rounded font-semibold transition-colors ${
-                  monthSubView === 'matrix' ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
+                  monthSubView === 'matrix' ? 'bg-lime text-[#0a1109]' : 'bg-white/[0.03] text-[#8b98a0] border border-white/[0.09]'
                 }`}
               >
                 Grille Ressources (Jours 1-{daysInMonthCount})
@@ -546,7 +609,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <button
                 onClick={() => setMonthSubView('calendar')}
                 className={`px-2.5 py-1 rounded font-semibold transition-colors ${
-                  monthSubView === 'calendar' ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
+                  monthSubView === 'calendar' ? 'bg-lime text-[#0a1109]' : 'bg-white/[0.03] text-[#8b98a0] border border-white/[0.09]'
                 }`}
               >
                 Calendrier Mensuel
@@ -555,39 +618,39 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {monthSubView === 'matrix' ? (
-            <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+            <div className="overflow-x-auto border border-white/[0.09] rounded-xl">
               <table className="w-full text-left border-collapse min-w-[1100px]">
                 <thead>
-                  <tr className="bg-slate-800 text-slate-200 text-xs font-semibold">
-                    <th className="py-2.5 px-3 border-b border-slate-700 w-60 sticky left-0 bg-slate-800 z-10">
+                  <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
+                    <th className="py-2.5 px-3 border-b border-white/[0.08] w-60 sticky left-0 bg-[#0e1518] z-10">
                       Ressource Humaine
                     </th>
                     {monthDays.map((d) => (
                       <th
                         key={d.getDate()}
-                        className="py-2 px-1 border-b border-slate-700 text-center font-mono text-[10px] w-8"
+                        className="py-2 px-1 border-b border-white/[0.08] text-center font-mono text-[10px] w-8"
                       >
                         <div>{d.getDate()}</div>
-                        <div className="text-[8px] text-slate-400 capitalize">
+                        <div className="text-[8px] text-[#6e7c84] capitalize">
                           {d.toLocaleDateString('fr-FR', { weekday: 'narrow' })}
                         </div>
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                <tbody className="divide-y divide-white/[0.05] text-xs">
                   {filteredRessources.map((res) => (
-                    <tr key={res.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors">
-                      <td className="py-2 px-3 font-medium text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 sticky left-0 bg-white dark:bg-slate-900 z-10 shadow-xs">
+                    <tr key={res.id} className="hover:bg-white/[0.025] transition-colors">
+                      <td className="py-2 px-3 font-medium text-[#eef3f4] border-r border-white/[0.08] sticky left-0 bg-[#0e1518] z-10">
                         <button
                           onClick={() => onSelectResource(res)}
-                          className="text-left font-bold hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block text-xs truncate w-48"
+                          className="text-left font-bold hover:text-lime transition-colors block text-xs truncate w-48"
                         >
                           {res.prenom} {res.nom}
                         </button>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between mt-0.5">
+                        <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                           <span>{res.fonction}</span>
-                          <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1 rounded">
+                          <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
                             {res.chaineRattachement}
                           </span>
                         </div>
@@ -610,7 +673,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                             <td
                               key={d.getDate()}
                               onClick={() => onSelectAffectation(matchingAff)}
-                              className="p-1 border-r border-slate-100 dark:border-slate-800 bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-center text-[10px] font-bold"
+                              className="p-1 border-r border-white/[0.05] bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-center text-[10px] font-bold"
                               title={`${res.prenom} ${res.nom} - ${matchingAff.emissionNom}`}
                             >
                               •
@@ -621,9 +684,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         return (
                           <td
                             key={d.getDate()}
-                            className="p-1 border-r border-slate-100 dark:border-slate-800 bg-emerald-50/30 dark:bg-emerald-500/5 text-center text-emerald-800 text-[10px]"
+                            className="p-1 border-r border-white/[0.05] bg-lime/[0.04] text-center text-[10px]"
                           >
-                            <div className="w-1 h-1 bg-emerald-400 dark:bg-emerald-500 rounded-full mx-auto opacity-50"></div>
+                            <div className="w-1 h-1 bg-lime rounded-full mx-auto opacity-50"></div>
                           </td>
                         );
                       })}
@@ -634,9 +697,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <div className="grid grid-cols-7 gap-1 bg-slate-200 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-300 dark:border-slate-700 min-w-[640px]">
+              <div className="grid grid-cols-7 gap-1 bg-white/[0.05] p-1.5 rounded-xl border border-white/[0.08] min-w-[640px]">
                 {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((dayHeader) => (
-                  <div key={dayHeader} className="bg-slate-800 dark:bg-slate-950 text-slate-200 font-bold text-center py-2 text-xs rounded">
+                  <div key={dayHeader} className="bg-black/30 text-[#9aa5aa] font-bold text-center py-2 text-xs rounded">
                     {dayHeader}
                   </div>
                 ))}
@@ -653,11 +716,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   });
 
                   return (
-                    <div key={dayStr} className="bg-white dark:bg-slate-900 p-2 min-h-[90px] rounded border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-                      <div className="flex justify-between items-center text-xs font-bold text-slate-800 dark:text-slate-100">
+                    <div key={dayStr} className="bg-[#0d1217] p-2 min-h-[90px] rounded border border-white/[0.07] flex flex-col justify-between">
+                      <div className="flex justify-between items-center text-xs font-bold text-[#eef3f4]">
                         <span>{d.getDate()}</span>
                         {dayAffectations.length > 0 && (
-                          <span className="text-[10px] bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 px-1.5 py-0.5 rounded-full font-extrabold">
+                          <span className="text-[10px] bg-rose-500/15 text-rose-300 px-1.5 py-0.5 rounded-full font-extrabold">
                             {dayAffectations.length} occ.
                           </span>
                         )}
@@ -668,13 +731,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           <div
                             key={aff.id}
                             onClick={() => onSelectAffectation(aff)}
-                            className="text-[9px] bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-800/60 text-rose-900 dark:text-rose-300 p-1 rounded font-medium truncate cursor-pointer hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                            className="text-[9px] bg-rose-500/10 border border-rose-500/20 text-rose-300 p-1 rounded font-medium truncate cursor-pointer hover:bg-rose-500/20"
                           >
                             {aff.emissionNom}
                           </div>
                         ))}
                         {dayAffectations.length > 2 && (
-                          <div className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold text-center">
+                          <div className="text-[9px] text-[#6e7c84] font-semibold text-center">
                             +{dayAffectations.length - 2} autres...
                           </div>
                         )}
@@ -690,24 +753,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {modeVue === 'periode' && (
         <div className="space-y-4">
-          <div className="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-black/30 text-[#eef3f4] p-4 rounded-xl border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-sm font-bold flex items-center gap-2">
-                <CalendarRange className="w-4 h-4 text-emerald-400" />
+                <CalendarRange className="w-4 h-4 text-lime" />
                 Analyse de la Période du {periodStart} au {periodEnd}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-[#8b98a0] mt-0.5">
                 Période de {customPeriodDays.length} jour(s) sélectionné(s)
               </p>
             </div>
 
             <div className="flex items-center gap-4 text-xs">
-              <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-center">
-                <div className="text-slate-400 text-[10px]">Ressources Filtre</div>
-                <div className="text-emerald-400 font-bold text-sm">{filteredRessources.length}</div>
+              <div className="bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 rounded-lg text-center">
+                <div className="text-[#8b98a0] text-[10px]">Ressources Filtre</div>
+                <div className="text-lime font-bold text-sm">{filteredRessources.length}</div>
               </div>
-              <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-center">
-                <div className="text-slate-400 text-[10px]">Affectations Totales</div>
+              <div className="bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 rounded-lg text-center">
+                <div className="text-[#8b98a0] text-[10px]">Affectations Totales</div>
                 <div className="text-rose-400 font-bold text-sm">
                   {
                     affectations.filter((aff) => {
@@ -721,37 +784,37 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
           </div>
 
-          <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="overflow-x-auto border border-white/[0.09] rounded-xl">
             <table className="w-full text-left border-collapse min-w-[900px]">
               <thead>
-                <tr className="bg-slate-800 text-slate-200 text-xs font-semibold">
-                  <th className="py-2.5 px-3 border-b border-slate-700 w-52 sticky left-0 bg-slate-800 z-10">
+                <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
+                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-52 sticky left-0 bg-[#0e1518] z-10">
                     Ressource Humaine
                   </th>
                   {customPeriodDays.map((d) => (
                     <th
                       key={formatDateStr(d)}
-                      className="py-2 px-1 border-b border-slate-700 text-center font-mono text-[10px] w-12"
+                      className="py-2 px-1 border-b border-white/[0.08] text-center font-mono text-[10px] w-12"
                     >
                       <div className="capitalize">{d.toLocaleDateString('fr-FR', { weekday: 'narrow' })}</div>
-                      <div className="text-[9px] text-slate-300">{d.getDate()}/{d.getMonth() + 1}</div>
+                      <div className="text-[9px] text-[#8b98a0]">{d.getDate()}/{d.getMonth() + 1}</div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+              <tbody className="divide-y divide-white/[0.05] text-xs">
                 {filteredRessources.map((res) => (
-                  <tr key={res.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors">
-                    <td className="py-2.5 px-3 font-medium text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 sticky left-0 bg-white dark:bg-slate-900 z-10 shadow-xs">
+                  <tr key={res.id} className="hover:bg-white/[0.025] transition-colors">
+                    <td className="py-2.5 px-3 font-medium text-[#eef3f4] border-r border-white/[0.08] sticky left-0 bg-[#0e1518] z-10">
                       <button
                         onClick={() => onSelectResource(res)}
-                        className="text-left font-bold hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block text-xs"
+                        className="text-left font-bold hover:text-lime transition-colors block text-xs"
                       >
                         {res.prenom} {res.nom}
                       </button>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between mt-0.5">
+                      <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                         <span>{res.fonction}</span>
-                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1 rounded">
+                        <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
                           {res.chaineRattachement}
                         </span>
                       </div>
@@ -774,7 +837,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           <td
                             key={dayStr}
                             onClick={() => onSelectAffectation(matchingAff)}
-                            className="p-1 border-r border-slate-100 dark:border-slate-800 bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-center text-[10px] font-bold"
+                            className="p-1 border-r border-white/[0.05] bg-rose-500 hover:bg-rose-600 transition-colors cursor-pointer text-white text-center text-[10px] font-bold"
                             title={`${matchingAff.emissionNom} (${matchingAff.lieu})`}
                           >
                             <div className="truncate text-[9px]">{matchingAff.emissionNom.slice(0, 5)}</div>
@@ -783,8 +846,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       }
 
                       return (
-                        <td key={dayStr} className="p-1 border-r border-slate-100 dark:border-slate-800 bg-emerald-50/30 dark:bg-emerald-500/5 text-center text-emerald-800 text-[10px]">
-                          <div className="w-1.5 h-1.5 bg-emerald-400 dark:bg-emerald-500 rounded-full mx-auto opacity-40"></div>
+                        <td key={dayStr} className="p-1 border-r border-white/[0.05] bg-lime/[0.04] text-center text-[10px]">
+                          <div className="w-1.5 h-1.5 bg-lime rounded-full mx-auto opacity-40"></div>
                         </td>
                       );
                     })}

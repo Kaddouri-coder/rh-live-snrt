@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StatsGlobales, FiltresRecherche } from '../types';
 import { getNowDateTimeStr } from '../../shared/utils/dateHelpers';
 import {
   Users,
-  CheckCircle2,
-  XCircle,
+  CalendarCheck2,
   TrendingUp,
+  AlertTriangle,
   Search,
   Sparkles,
   ArrowRight,
-  Clock,
+  BriefcaseBusiness,
+  Grid2X2,
+  Zap,
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -20,17 +22,72 @@ interface DashboardProps {
   dateFinFormatted: string;
 }
 
+function MetricCard({
+  label,
+  value,
+  note,
+  accent,
+  icon: Icon,
+}: {
+  label: string;
+  value: string | number;
+  note: string;
+  accent: 'lime' | 'cyan' | 'violet' | 'rose';
+  icon: typeof Users;
+}) {
+  const accentColor =
+    accent === 'lime' ? '#b7ff4a' : accent === 'cyan' ? '#58d5ff' : accent === 'violet' ? '#a58cff' : '#f16e78';
+  const accentClass =
+    accent === 'lime' ? 'text-lime border-lime/25 bg-lime/[0.07]'
+    : accent === 'cyan' ? 'text-cyan border-cyan/25 bg-cyan/[0.07]'
+    : accent === 'violet' ? 'text-violet border-violet/25 bg-violet/[0.07]'
+    : 'text-rose-400 border-rose-400/25 bg-rose-400/[0.07]';
+
+  return (
+    <article className="relative min-h-[124px] overflow-hidden p-5 rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#121c21]/80 to-[#0a1014]/80">
+      <div
+        className="pointer-events-none absolute w-32 h-32 rounded-full -right-9 -bottom-16 opacity-25"
+        style={{ background: `radial-gradient(circle, ${accentColor}, transparent 66%)` }}
+      />
+      <div className="relative flex items-center justify-between">
+        <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-[#6e7c84]">{label}</span>
+        <span className={`w-6 h-6 grid place-items-center rounded-md border ${accentClass}`}>
+          <Icon size={14} strokeWidth={1.8} />
+        </span>
+      </div>
+      <div className="relative mt-3 mb-2.5 font-display text-[26px] font-semibold tracking-tight text-[#ecf2f1]">
+        {value}
+      </div>
+      <div className="relative text-[10px] text-[#66757c]">{note}</div>
+    </article>
+  );
+}
+
 export const Dashboard: React.FC<DashboardProps> = ({
   stats,
   onNavigateToRecherche,
   dateDebutFormatted,
   dateFinFormatted,
 }) => {
+  // Top chaînes réelles (issues de stats.parChaine) pour les noeuds du mesh —
+  // aucune donnée fictive : si une chaîne n'a aucune ressource, elle n'apparaît
+  // simplement pas.
+  const topChaines = useMemo(() => {
+    if (!stats) return [];
+    return Object.entries(stats.parChaine)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+  }, [stats]);
+
+  const nodePositions = ['node-top', 'node-left', 'node-right', 'node-bottom-left', 'node-bottom-right'];
+  const nodeTones: Array<'lime' | 'cyan'> = ['lime', 'cyan', 'lime', 'cyan', 'cyan'];
+
   if (!stats) {
     return (
-      <div className="bg-white dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2"></div>
-        <p className="text-xs text-slate-500 dark:text-slate-400">Chargement des statistiques de disponibilité...</p>
+      <div className="bg-[#0d1217] rounded-xl p-8 border border-white/[0.08] text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime mx-auto mb-2"></div>
+        <p className="text-xs text-[#829199]">Chargement des statistiques de disponibilité...</p>
       </div>
     );
   }
@@ -38,155 +95,196 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const { totalRessources, totalAffectations, tauxOccupation, conflitsDetectes } = stats;
 
   return (
-    <div className="space-y-6">
-      <div className="relative rounded-2xl overflow-hidden shadow-md" style={{ background: 'linear-gradient(135deg, #0F6E56 0%, #0C447C 100%)' }}>
+    <div className="space-y-5">
+      {/* Intro */}
+      <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-[22px] h-px bg-lime shadow-[0_0_8px_rgba(183,255,74,0.55)]" />
+            <span className="text-[9px] font-bold tracking-[0.16em] uppercase text-[#6e7c84]">
+              SNRT · Consultation temps réel
+            </span>
+          </div>
+          <h1 className="font-display max-w-[660px] text-[clamp(1.9rem,3.6vw,3rem)] font-semibold tracking-tight leading-[1.03] text-[#eff5f4]">
+            Savoir qui est <em className="text-lime not-italic">disponible, maintenant.</em>
+          </h1>
+          <p className="max-w-md mt-3 text-[13px] leading-relaxed text-[#829199]">
+            RH Live centralise la disponibilité des ressources par chaîne, direction et fonction pour
+            accélérer chaque affectation.
+          </p>
+        </div>
 
-        <div className="relative z-10 p-6 md:p-8 min-h-[190px] flex flex-col justify-between">
-          <span className="self-start text-[11px] font-bold text-amber-900 bg-amber-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            Disponibilité RH
-          </span>
+        <div className="flex items-center gap-3 pb-0.5 shrink-0">
+          <div className="inline-flex items-center gap-2 h-[34px] px-3 rounded-lg border border-cyan/15 bg-[#0e1c21]/60 text-[9px] text-[#7d8c91]">
+            <span className="w-[5px] h-[5px] rounded-full bg-lime shadow-[0_0_8px_theme(colors.lime)]" />
+            Période <strong className="text-[#cbd9d7] font-medium">{dateDebutFormatted} → {dateFinFormatted}</strong>
+          </div>
+          <button
+            onClick={() => onNavigateToRecherche()}
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-lime text-[#0a1109] text-[11px] font-bold shadow-[0_0_22px_rgba(183,255,74,0.08)] hover:bg-[#c4ff69] hover:shadow-[0_0_30px_rgba(183,255,74,0.2)] hover:-translate-y-px transition-all"
+          >
+            <Search className="w-4 h-4" />
+            Consulter les disponibilités
+          </button>
+        </div>
+      </section>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-6">
+      {/* Métriques réelles */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <MetricCard
+          label="Ressources suivies"
+          value={totalRessources}
+          note="dans la base SNRT"
+          accent="cyan"
+          icon={Users}
+        />
+        <MetricCard
+          label="Affectations"
+          value={totalAffectations}
+          note="planifiées sur la période"
+          accent="lime"
+          icon={CalendarCheck2}
+        />
+        <MetricCard
+          label="Taux d'occupation"
+          value={`${tauxOccupation}%`}
+          note="des ressources suivies"
+          accent="violet"
+          icon={TrendingUp}
+        />
+        <MetricCard
+          label="Conflits détectés"
+          value={conflitsDetectes}
+          note="chevauchements Art. 3"
+          accent="rose"
+          icon={AlertTriangle}
+        />
+      </section>
+
+      {/* Mesh + actions rapides */}
+      <section className="grid grid-cols-1 lg:grid-cols-[1.65fr_0.85fr] gap-3.5">
+        <div className="rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#101e1e]/70 to-[#090f13]/80">
+          <div className="flex items-start justify-between gap-4 p-5 pb-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
-                Pilotez vos équipes
-                <br />
-                en temps réel
+              <div className="flex items-center gap-2 text-[9px] font-bold tracking-[0.12em] uppercase text-[#6e7c84]">
+                Availability mesh
+                <span className="inline-flex items-center gap-1.5 text-lime">
+                  <span className="w-1 h-1 rounded-full bg-lime shadow-[0_0_8px_theme(colors.lime)]" /> Live
+                </span>
+              </div>
+              <h2 className="mt-2 text-[15px] font-medium tracking-tight text-[#dfe9e8]">
+                La disponibilité par écosystème SNRT.
               </h2>
-              <p className="text-xs text-emerald-50/80 mt-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5" />
-                Période sous examen : <strong className="text-white">{dateDebutFormatted}</strong> au{' '}
-                <strong className="text-white">{dateFinFormatted}</strong>
-              </p>
             </div>
-
             <button
               onClick={() => onNavigateToRecherche()}
-              className="self-start md:self-auto bg-white hover:bg-emerald-50 text-emerald-900 text-xs font-semibold px-5 py-2.5 rounded-full shadow transition-colors flex items-center gap-2 shrink-0"
+              className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-white/[0.09] bg-white/[0.02] text-[10px] text-[#8e9da1] hover:text-lime hover:border-lime/30 transition-colors shrink-0"
             >
-              <Search className="w-4 h-4" />
-              <span>Consulter les disponibilités</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <Grid2X2 size={13} /> Explorer
+            </button>
+          </div>
+
+          <div className="mesh-visual mx-3.5 min-h-[300px] sm:min-h-[340px]">
+            <div className="mesh-grid" />
+            <div className="mesh-orbit orbit-one" />
+            <div className="mesh-orbit orbit-two" />
+            <div className="mesh-orbit orbit-three" />
+            <div className="mesh-sweep" />
+
+            {topChaines.map(([chaineName, count], i) => (
+              <button
+                key={chaineName}
+                className={`org-node ${nodePositions[i]} node-${nodeTones[i]}`}
+                onClick={() => onNavigateToRecherche({ chaine: chaineName })}
+              >
+                <span className="node-pulse" />
+                <span className="node-core" />
+                <span className="flex flex-col gap-0.5">
+                  <strong className="text-[10px] font-semibold">{chaineName}</strong>
+                  <small className="text-[8px] text-[#6e8186] whitespace-nowrap">{count} ressource(s)</small>
+                </span>
+              </button>
+            ))}
+
+            <div className="mesh-center-label">
+              <span className="text-[7px] font-bold tracking-[0.18em] text-[#78919b]">RESSOURCES SUIVIES</span>
+              <strong className="font-display my-0.5 text-[2.1rem] sm:text-[2.4rem] font-medium tracking-tight text-[#ecf8f1]" style={{ textShadow: '0 0 22px rgba(183,255,74,0.2)' }}>
+                {totalRessources}
+              </strong>
+              <small className="text-[9px] text-[#72858a]">tous métiers confondus</small>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between min-h-[46px] px-5 py-3 text-[9px]">
+            <div className="flex flex-wrap gap-3.5">
+              <span className="flex items-center gap-1.5 text-[#68777c]">
+                <i className="w-1.5 h-1.5 rounded-full bg-lime shadow-[0_0_7px_theme(colors.lime)]" /> Chaîne suivie
+              </span>
+              <span className="flex items-center gap-1.5 text-[#68777c]">
+                <i className="w-1.5 h-1.5 rounded-full bg-cyan shadow-[0_0_7px_theme(colors.cyan)]" /> Chaîne suivie
+              </span>
+            </div>
+            <span className="text-[#64747b]">
+              Cliquez un noeud pour filtrer par <strong className="text-[#9ba9ab] font-medium">chaîne</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Actions rapides (réelles) */}
+        <div className="rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#101e1e]/70 to-[#090f13]/80 p-5">
+          <div className="flex items-center gap-2 text-[9px] font-bold tracking-[0.12em] uppercase text-[#6e7c84]">
+            <Sparkles className="w-3.5 h-3.5 text-lime" /> Accès SNRT
+          </div>
+          <h2 className="mt-2 mb-4 text-[15px] font-medium tracking-tight text-[#dfe9e8]">
+            Quelle ressource <em className="text-lime not-italic">faut-il trouver ?</em>
+          </h2>
+
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() =>
+                onNavigateToRecherche({
+                  fonction: 'Cameraman',
+                  chaine: 'Al Aoula',
+                  dateDebut: getNowDateTimeStr(9, 0),
+                  dateFin: getNowDateTimeStr(14, 0),
+                })
+              }
+              className="flex items-start gap-2.5 min-h-[60px] p-3 rounded-lg border border-lime/15 bg-lime/[0.03] hover:bg-lime/[0.08] hover:border-lime/30 text-left transition-colors group"
+            >
+              <Zap className="w-4 h-4 text-lime shrink-0 mt-0.5" />
+              <span className="flex flex-col gap-0.5 min-w-0 flex-1">
+                <strong className="text-[10px] font-semibold text-[#d9e4e4]">Cameramen Al Aoula</strong>
+                <small className="text-[9px] text-[#74848a]">Aujourd'hui, 09h – 14h</small>
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#58686f] group-hover:text-lime group-hover:translate-x-0.5 transition-all shrink-0 mt-0.5" />
+            </button>
+
+            <button
+              onClick={() => onNavigateToRecherche({ fonction: 'Réalisateur', chaine: 'Arryadia' })}
+              className="flex items-start gap-2.5 min-h-[60px] p-3 rounded-lg border border-cyan/15 bg-cyan/[0.03] hover:bg-cyan/[0.08] hover:border-cyan/30 text-left transition-colors group"
+            >
+              <BriefcaseBusiness className="w-4 h-4 text-cyan shrink-0 mt-0.5" />
+              <span className="flex flex-col gap-0.5 min-w-0 flex-1">
+                <strong className="text-[10px] font-semibold text-[#d9e4e4]">Réalisateurs Arryadia</strong>
+                <small className="text-[9px] text-[#74848a]">Retransmissions sportives</small>
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#58686f] group-hover:text-cyan group-hover:translate-x-0.5 transition-all shrink-0 mt-0.5" />
+            </button>
+
+            <button
+              onClick={() => onNavigateToRecherche({ fonction: 'Ingénieur du son' })}
+              className="flex items-start gap-2.5 min-h-[60px] p-3 rounded-lg border border-violet/15 bg-violet/[0.03] hover:bg-violet/[0.08] hover:border-violet/30 text-left transition-colors group"
+            >
+              <Search className="w-4 h-4 text-violet shrink-0 mt-0.5" />
+              <span className="flex flex-col gap-0.5 min-w-0 flex-1">
+                <strong className="text-[10px] font-semibold text-[#d9e4e4]">Ingénieurs son disponibles</strong>
+                <small className="text-[9px] text-[#74848a]">Enregistrement studio</small>
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#58686f] group-hover:text-violet group-hover:translate-x-0.5 transition-all shrink-0 mt-0.5" />
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Ressources Humaines</p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalRessources}</h3>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Membres des équipes techniques & éditoriales</p>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300">
-            <Users className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-emerald-50/60 dark:bg-emerald-500/10 rounded-2xl p-4 border border-emerald-200 dark:border-emerald-800/60 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">Total Affectations</p>
-            <h3 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-1">{totalAffectations}</h3>
-            <p className="text-[11px] text-emerald-600 dark:text-emerald-500 mt-0.5 font-medium">Planifiées sur la période</p>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-sm">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-rose-50/60 dark:bg-rose-500/10 rounded-2xl p-4 border border-rose-200 dark:border-rose-800/60 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold text-rose-800 dark:text-rose-300">Conflits Détectés</p>
-            <h3 className="text-2xl font-bold text-rose-700 dark:text-rose-400 mt-1">{conflitsDetectes}</h3>
-            <p className="text-[11px] text-rose-600 dark:text-rose-500 mt-0.5 font-medium">Article 3 - Chevauchements</p>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-rose-600 flex items-center justify-center text-white shadow-sm">
-            <XCircle className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Taux d'Occupation</p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{tauxOccupation}%</h3>
-            <div className="w-28 bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-1.5 overflow-hidden border border-slate-200 dark:border-slate-700">
-              <div
-                className="bg-emerald-500 h-full rounded-full transition-all"
-                style={{ width: `${tauxOccupation}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-400 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-br from-emerald-900/5 to-teal-900/5 dark:from-emerald-400/5 dark:to-teal-400/5 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 p-4">
-        <div className="flex items-center space-x-2 mb-3">
-          <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-            Scénarios de recherche rapide
-          </h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <button
-            onClick={() =>
-              onNavigateToRecherche({
-                fonction: 'Cameraman',
-                chaine: 'Al Aoula',
-                dateDebut: getNowDateTimeStr(9, 0),
-                dateFin: getNowDateTimeStr(14, 0),
-              })
-            }
-            className="bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-left p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-xs transition-all group"
-          >
-            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 flex items-center justify-between">
-              <span>Cameramen Al Aoula (09h - 14h)</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Consulter les cameramen disponibles aujourd'hui entre 09:00 et 14:00
-            </p>
-          </button>
-
-          <button
-            onClick={() =>
-              onNavigateToRecherche({
-                fonction: 'Réalisateur',
-                chaine: 'Arryadia',
-              })
-            }
-            className="bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-left p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-xs transition-all group"
-          >
-            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 flex items-center justify-between">
-              <span>Réalisateurs Arryadia</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Disponibilités des réalisateurs pour les retransmissions sportives
-            </p>
-          </button>
-
-          <button
-            onClick={() =>
-              onNavigateToRecherche({
-                fonction: 'Ingénieur du son',
-              })
-            }
-            className="bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-left p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-xs transition-all group"
-          >
-            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 flex items-center justify-between">
-              <span>Ingénieurs Son Disponibles</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Consulter les ingénieurs du son libres pour enregistrement studio
-            </p>
-          </button>
-        </div>
-      </div>
+      </section>
     </div>
   );
 };

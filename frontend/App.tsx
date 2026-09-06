@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Search, Bell } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { SearchFilters } from './components/SearchFilters';
@@ -14,6 +14,7 @@ import * as api from './services/api';
 import { useAuth } from './context/AuthContext';
 import { getNowDateTimeStr } from '../shared/utils/dateHelpers';
 import { ToastContainer, ToastItem, ToastType } from './components/Toast';
+import { SNRTBackground } from './components/SNRTBackground';
 
 import {
   FiltresRecherche,
@@ -243,8 +244,17 @@ export default function App() {
     });
   };
 
-  const nbDisponibles = resultatsDispo.filter((r) => r.etat === 'Disponible').length;
+ const nbDisponibles = resultatsDispo.filter((r) => r.etat === 'Disponible').length;
   const nbOccupees = resultatsDispo.filter((r) => r.etat === 'Occupée').length;
+
+  const tabLabels: Record<typeof activeTab, string> = {
+    dashboard: 'Tableau de bord',
+    recherche: 'Recherche & Liste',
+    calendrier: 'Vue Calendrier',
+  };
+  const topbarInitials = currentUser
+    ? `${currentUser.nom.charAt(0)}${currentUser.nom.split(' ')[1]?.charAt(0) || ''}`.toUpperCase()
+    : '';
 
   // --- Page de connexion (si non authentifié) ---
   if (!token || !currentUser) {
@@ -252,7 +262,15 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200 flex selection:bg-emerald-500 selection:text-white transition-colors">
+   <div
+      className="min-h-screen font-sans text-[#eef3f4] flex selection:bg-lime/30 selection:text-white"
+      style={{
+        background:
+          'radial-gradient(circle at 70% -15%, rgba(30,98,110,0.16), transparent 32rem), radial-gradient(circle at 0% 68%, rgba(31,68,50,0.07), transparent 34rem), #05080b',
+      }}
+    >
+      <SNRTBackground parFonction={statsGlobales?.parFonction} />
+
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -262,22 +280,59 @@ export default function App() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="relative flex-1 min-w-0 flex flex-col">
       {/* Barre supérieure visible uniquement sur mobile, avec le bouton menu */}
-      <div className="md:hidden sticky top-0 z-20 bg-slate-900 text-white flex items-center gap-3 px-4 py-3 shadow-sm">
-        <button onClick={() => setIsSidebarOpen(true)} aria-label="Ouvrir le menu" className="p-1.5 -ml-1.5 text-slate-300 hover:text-white">
+      <div className="md:hidden sticky top-0 z-20 bg-[#080d11] border-b border-white/[0.07] text-white flex items-center gap-3 px-4 py-3">
+        <button onClick={() => setIsSidebarOpen(true)} aria-label="Ouvrir le menu" className="p-1.5 -ml-1.5 text-[#7c8990] hover:text-lime">
           <Menu className="w-5 h-5" />
         </button>
-        <div className="w-7 h-7 rounded-md bg-white flex items-center justify-center shrink-0 p-1">
+        <div className="w-7 h-7 rounded-md bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
           <img src="/logo-snrt-icon.webp" alt="Logo SNRT" className="w-full h-full object-contain" />
         </div>
-        <span className="text-sm font-bold">
-          RH <span className="text-emerald-400 font-extrabold">Live</span>
+        <span className="font-display text-sm font-bold">
+          RH <span className="text-lime font-extrabold">live</span>
         </span>
       </div>
 
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {activeTab === 'dashboard' && (
+      {/* Barre supérieure desktop : fil d'ariane, recherche rapide, notifications */}
+      <header className="hidden md:flex items-center justify-between h-[72px] px-8 border-b border-white/[0.07]">
+        <div className="flex items-center gap-2 text-[11px] text-[#5f6d75]">
+          <span>RH live</span>
+          <span className="text-[#35424a]">/</span>
+          <strong className="text-[#c1cdcf] font-medium">{tabLabels[activeTab]}</strong>
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setActiveTab('recherche')}
+            className="flex items-center gap-2 h-8 px-3 rounded-lg border border-white/10 bg-white/[0.03] text-[#839097] text-[10px] hover:border-lime/30 hover:text-[#e6efef] transition-colors"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Rechercher une ressource</span>
+          </button>
+          <button
+            onClick={() =>
+              showToast(
+                statsGlobales && statsGlobales.conflitsDetectes > 0
+                  ? `${statsGlobales.conflitsDetectes} conflit(s) de planning détecté(s).`
+                  : 'Aucun conflit détecté.',
+                statsGlobales && statsGlobales.conflitsDetectes > 0 ? 'info' : 'success'
+              )
+            }
+            aria-label="Notifications"
+            className="relative text-[#829198] hover:text-[#e5eff0] transition-colors"
+          >
+            <Bell className="w-[17px] h-[17px]" />
+            {!!statsGlobales?.conflitsDetectes && (
+              <span className="absolute -top-0.5 -right-1 w-[5px] h-[5px] rounded-full bg-lime shadow-[0_0_7px_theme(colors.lime)]" />
+            )}
+          </button>
+          <div className="w-[27px] h-[27px] rounded-full grid place-items-center font-display text-[8px] font-extrabold text-[#0c130d] bg-gradient-to-br from-lime to-emerald-300">
+            {topbarInitials}
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">        {activeTab === 'dashboard' && (
           <Dashboard
             stats={statsGlobales}
             filtres={filtres}
@@ -307,9 +362,9 @@ export default function App() {
             />
 
             {isLoading ? (
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-12 text-center border border-slate-200 dark:border-slate-800">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="bg-[#0d1217] rounded-xl p-12 text-center border border-white/[0.08]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime mx-auto mb-3"></div>
+                <p className="text-xs text-[#829199] font-medium">
                   Calcul de la disponibilité RH en cours...
                 </p>
               </div>
@@ -343,10 +398,10 @@ export default function App() {
         )}
       </main>
 
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+      <footer className="bg-[#080d11] border-t border-white/[0.07] py-4 text-center text-xs text-[#66757c]">
         <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
-            Application de consultation de la disponibilité des Ressources Humaines • <strong>RH Live</strong>
+            Application de consultation de la disponibilité des Ressources Humaines • <strong className="text-[#9ba9ab]">RH live</strong>
           </span>
           <span>
             SNRT / Architecture MERN (Express / React / Node.js)

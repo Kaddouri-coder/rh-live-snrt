@@ -145,23 +145,23 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
     <>
       {/* Aperçu à l'écran (dans le modal habituel) */}
       <div
-        className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-start justify-center p-4 overflow-y-auto print:hidden"
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-start justify-center p-4 overflow-y-auto print:hidden"
         onClick={onClose}
       >
         <div
-          className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-800 dark:border-slate-800 shadow-2xl max-w-4xl w-full overflow-hidden my-8"
+          className="bg-[#0d1217] rounded-2xl border border-white/[0.09] shadow-2xl max-w-4xl w-full overflow-hidden my-8"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="sticky top-0 z-10 bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
+          <div className="sticky top-0 z-10 bg-black/40 text-white p-4 flex items-center justify-between border-b border-white/[0.08]">
             <div className="flex items-center space-x-2">
-              <Radio className="w-5 h-5 text-emerald-400" />
-              <span className="font-bold text-sm">Aperçu du Rapport de Disponibilité RH</span>
+              <Radio className="w-5 h-5 text-lime" />
+              <span className="font-semibold text-sm">Aperçu du Rapport de Disponibilité RH</span>
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                className="inline-flex items-center space-x-1.5 bg-lime hover:bg-[#c4ff69] text-[#0a1109] text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
               >
                 <Printer className="w-4 h-4" />
                 <span>Imprimer / Exporter PDF</span>
@@ -170,7 +170,7 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
               <button
                 onClick={onClose}
                 aria-label="Fermer l'aperçu du rapport"
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[#8b98a0] hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
