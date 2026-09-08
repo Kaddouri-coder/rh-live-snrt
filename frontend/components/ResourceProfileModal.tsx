@@ -1,5 +1,6 @@
 import React from 'react';
 import { RessourceHumaine, Affectation } from '../types';
+import { ChannelBadge } from './ChannelBadge';
 import {
   X,
   Mail,
@@ -90,7 +91,7 @@ export const ResourceProfileModal: React.FC<ResourceProfileModalProps> = ({
             <div className="space-y-2 text-xs">
               <div className="flex items-center space-x-2 text-[#8b98a0]">
                 <Tv className="w-4 h-4 text-lime" />
-                <span>Chaîne : <strong className="text-[#eef3f4]">{ressource.chaineRattachement}</strong></span>
+                <span>Chaîne : <strong className="text-[#eef3f4]"><ChannelBadge name={ressource.chaineRattachement} /></strong></span>
               </div>
               <div className="flex items-center space-x-2 text-[#8b98a0]">
                 <Briefcase className="w-4 h-4 text-lime" />

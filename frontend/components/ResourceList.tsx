@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DisponibiliteResult, Affectation, RessourceHumaine } from '../types';
+import { ChannelBadge } from './ChannelBadge';
 import {
   CheckCircle2,
   XCircle,
@@ -168,9 +169,8 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px] mb-3 border-t border-b border-white/[0.07] py-2">
-                    <span className="bg-white/[0.05] text-[#8b98a0] px-2 py-0.5 rounded font-medium flex items-center gap-1">
-                      <Tv className="w-3 h-3 text-[#5f6d75]" />
-                      {ressource.chaineRattachement}
+                    <span className="bg-white/[0.05] text-[#8b98a0] px-2 py-0.5 rounded font-medium">
+                      <ChannelBadge name={ressource.chaineRattachement} />
                     </span>
                     <span className="bg-white/[0.05] text-[#8b98a0] px-2 py-0.5 rounded font-medium flex items-center gap-1">
                       <Briefcase className="w-3 h-3 text-[#5f6d75]" />
@@ -216,8 +216,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                               {aff.lieu}
                             </span>
                             <span className="flex items-center gap-1 text-[#8b98a0]">
-                              <Tv className="w-3 h-3 text-[#5f6d75]" />
-                              {aff.chaine}
+                              <ChannelBadge name={aff.chaine} />
                             </span>
                           </div>
 
@@ -283,7 +282,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({
                       <td className="py-3 px-4 font-medium text-[#c1cdcf]">{ressource.fonction}</td>
 
                       <td className="py-3 px-4">
-                        <div className="text-[#c1cdcf] font-medium">{ressource.chaineRattachement}</div>
+                        <div className="text-[#c1cdcf] font-medium"><ChannelBadge name={ressource.chaineRattachement} /></div>
                         <div className="text-[11px] text-[#6e7c84]">{ressource.direction}</div>
                       </td>
 

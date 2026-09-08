@@ -336,6 +336,7 @@ export default function App() {
           <Dashboard
             stats={statsGlobales}
             filtres={filtres}
+            onSelectResource={handleOpenResourceProfile}
             onNavigateToRecherche={(preset) => {
               if (preset) {
                 handleApplyPreset(preset);

@@ -54,6 +54,7 @@ export interface StatsGlobales {
   conflitsDetectes: number;
   parFonction: Record<string, number>;
   parChaine: Record<string, number>;
+  disponibiliteParChaine: Record<string, number>;
 }
 
 export type UserRole = 'admin' | 'consultant';

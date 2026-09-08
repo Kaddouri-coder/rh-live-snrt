@@ -60,7 +60,11 @@
   position: relative;
   overflow: hidden;
   border-radius: 0.6rem;
-  background: #071015;
+  background:
+    linear-gradient(180deg, rgba(4, 8, 11, 0.72) 0%, rgba(4, 8, 11, 0.55) 45%, rgba(4, 8, 11, 0.82) 100%),
+    url('/mesh-network-bg.png');
+  background-size: cover;
+  background-position: center 35%;
   border: 1px solid rgba(102, 161, 163, 0.15);
 }
 .mesh-grid {
@@ -136,11 +140,14 @@
 }
 .node-lime { --node-color: var(--color-lime); }
 .node-cyan { --node-color: var(--color-cyan); }
-.node-top { top: 12%; left: 45%; flex-direction: column-reverse; align-items: center; }
-.node-left { top: 42%; left: 8%; }
-.node-right { top: 38%; right: 8%; flex-direction: row-reverse; }
-.node-bottom-left { bottom: 13%; left: 20%; }
-.node-bottom-right { right: 18%; bottom: 12%; flex-direction: row-reverse; }
+.node-top { top: 8%; left: 40%; }
+.node-top-right { top: 20%; right: 13%; flex-direction: row-reverse; }
+.node-right { top: 46%; right: 4%; flex-direction: row-reverse; }
+.node-bottom-right { bottom: 15%; right: 13%; flex-direction: row-reverse; }
+.node-bottom { bottom: 3%; left: 40%; }
+.node-bottom-left { bottom: 15%; left: 9%; }
+.node-left { top: 46%; left: 4%; }
+.node-top-left { top: 20%; left: 9%; }
 .mesh-center-label {
   position: absolute;
   z-index: 3;

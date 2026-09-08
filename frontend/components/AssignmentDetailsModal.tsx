@@ -1,5 +1,6 @@
 import React from 'react';
 import { Affectation, RessourceHumaine } from '../types';
+import { ChannelBadge } from './ChannelBadge';
 import { X, Tv, Clock, MapPin } from 'lucide-react';
 
 interface AssignmentDetailsModalProps {
@@ -91,7 +92,7 @@ export const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({
               <span className="text-[11px] text-[#6e7c84] font-medium flex items-center gap-1">
                 <Tv className="w-3.5 h-3.5 text-lime" /> Chaîne
               </span>
-              <p className="font-bold text-[#eef3f4] mt-1">{affectation.chaine}</p>
+              <p className="font-bold text-[#eef3f4] mt-1"><ChannelBadge name={affectation.chaine} /></p>
             </div>
 
             <div className="bg-white/[0.025] p-3 rounded-lg border border-white/[0.07]">

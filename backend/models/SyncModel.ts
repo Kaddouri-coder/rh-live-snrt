@@ -77,6 +77,25 @@ class SyncModelClass {
       parChaine[r.chaineRattachement] = (parChaine[r.chaineRattachement] || 0) + 1;
     });
 
+    // Disponibilité réelle par chaîne : pour chaque chaîne, part des ressources
+    // qui n'ont AUCUNE affectation chevauchant la période (mêmes règles que
+    // tauxOccupation ci-dessous, mais détaillées chaîne par chaîne).
+    const disponibiliteParChaine: Record<string, number> = {};
+    Object.keys(parChaine).forEach((chaine) => {
+      const resIdsInChaine = new Set(
+        ressources.filter((r) => r.chaineRattachement === chaine).map((r) => r.id)
+      );
+      const totalInChaine = resIdsInChaine.size;
+      if (totalInChaine === 0) {
+        disponibiliteParChaine[chaine] = 0;
+        return;
+      }
+      const occupiedInChaine = new Set(
+        affectations.filter((a) => resIdsInChaine.has(a.ressourceId)).map((a) => a.ressourceId)
+      ).size;
+      disponibiliteParChaine[chaine] = Math.round(((totalInChaine - occupiedInChaine) / totalInChaine) * 100);
+    });
+
     const occupiedRessourceCount = uniqueRessourceIds.size;
     const tauxOccupation = totalRessources > 0 ? Math.round((occupiedRessourceCount / totalRessources) * 100) : 0;
 
@@ -87,6 +106,7 @@ class SyncModelClass {
       conflitsDetectes: conflitsCount,
       parFonction,
       parChaine,
+      disponibiliteParChaine,
     };
   }
 }

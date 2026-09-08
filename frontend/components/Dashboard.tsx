@@ -1,6 +1,9 @@
-import React, { useMemo } from 'react';
-import { StatsGlobales, FiltresRecherche } from '../types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StatsGlobales, FiltresRecherche, DisponibiliteResult } from '../types';
 import { getNowDateTimeStr } from '../../shared/utils/dateHelpers';
+import { getChannelStyle } from '../data/channelStyles';
+import { ChannelBadge } from './ChannelBadge';
+import * as api from '../services/api';
 import {
   Users,
   CalendarCheck2,
@@ -12,12 +15,15 @@ import {
   BriefcaseBusiness,
   Grid2X2,
   Zap,
+  UserCheck,
+  ExternalLink,
 } from 'lucide-react';
 
 interface DashboardProps {
   stats: StatsGlobales | null;
   filtres: FiltresRecherche;
   onNavigateToRecherche: (filtresPreset?: Partial<FiltresRecherche>) => void;
+  onSelectResource?: (ressource: DisponibiliteResult['ressource']) => void;
   dateDebutFormatted: string;
   dateFinFormatted: string;
 }
@@ -66,6 +72,7 @@ function MetricCard({
 export const Dashboard: React.FC<DashboardProps> = ({
   stats,
   onNavigateToRecherche,
+  onSelectResource,
   dateDebutFormatted,
   dateFinFormatted,
 }) => {
@@ -77,11 +84,76 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return Object.entries(stats.parChaine)
       .filter(([, count]) => count > 0)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+      .slice(0, 8);
   }, [stats]);
 
-  const nodePositions = ['node-top', 'node-left', 'node-right', 'node-bottom-left', 'node-bottom-right'];
-  const nodeTones: Array<'lime' | 'cyan'> = ['lime', 'cyan', 'lime', 'cyan', 'cyan'];
+  const nodePositions = [
+    'node-top',
+    'node-top-right',
+    'node-right',
+    'node-bottom-right',
+    'node-bottom',
+    'node-bottom-left',
+    'node-left',
+    'node-top-left',
+  ];
+
+  // "Qui peut être mobilisé maintenant" : vraie vérification de disponibilité
+  // à l'instant présent (fenêtre glissante de 2h), via le même endpoint que
+  // l'onglet Recherche — aucune donnée inventée.
+  const [mobilisables, setMobilisables] = useState<DisponibiliteResult[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const now = new Date();
+    const dansDeuxHeures = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const filtresMaintenant: FiltresRecherche = {
+      dateDebut: now.toISOString(),
+      dateFin: dansDeuxHeures.toISOString(),
+      fonction: 'Toutes les fonctions',
+      chaine: 'Toutes les chaînes',
+      direction: 'Toutes les directions',
+    };
+
+    api
+      .checkDisponibilite(filtresMaintenant)
+      .then((res) => {
+        if (!cancelled) setMobilisables(res);
+      })
+      .catch(() => {
+        if (!cancelled) setMobilisables([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const apercuMobilisables = useMemo(() => {
+    if (!mobilisables) return [];
+    // "Qui peut être mobilisé" ne doit montrer QUE des ressources réellement
+    // disponibles (pas juste les 5 premières de la base, quel que soit leur
+    // statut). Échantillon mélangé pour ne pas toujours afficher les mêmes
+    // personnes quand il y a plus de 5 disponibles.
+    const disponibles = mobilisables.filter((r) => r.etat === 'Disponible');
+    const melange = [...disponibles].sort(() => Math.random() - 0.5);
+    return melange.slice(0, 5);
+  }, [mobilisables]);
+
+  // Disponibilité par chaîne, triée par nombre de ressources (les chaînes les
+  // plus importantes en premier). Valeurs 100% réelles (stats.disponibiliteParChaine).
+  const chainesDisponibilite = useMemo(() => {
+    if (!stats) return [];
+    return Object.entries(stats.parChaine)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([chaine, count]) => ({
+        chaine,
+        count,
+        pct: stats.disponibiliteParChaine[chaine] ?? 0,
+      }));
+  }, [stats]);
 
   if (!stats) {
     return (
@@ -191,20 +263,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="mesh-orbit orbit-three" />
             <div className="mesh-sweep" />
 
-            {topChaines.map(([chaineName, count], i) => (
-              <button
-                key={chaineName}
-                className={`org-node ${nodePositions[i]} node-${nodeTones[i]}`}
-                onClick={() => onNavigateToRecherche({ chaine: chaineName })}
-              >
-                <span className="node-pulse" />
-                <span className="node-core" />
-                <span className="flex flex-col gap-0.5">
-                  <strong className="text-[10px] font-semibold">{chaineName}</strong>
-                  <small className="text-[8px] text-[#6e8186] whitespace-nowrap">{count} ressource(s)</small>
-                </span>
-              </button>
-            ))}
+            {topChaines.map(([chaineName, count], i) => {
+              const style = getChannelStyle(chaineName);
+              return (
+                <button
+                  key={chaineName}
+                  className={`org-node ${nodePositions[i]}`}
+                  onClick={() => onNavigateToRecherche({ chaine: chaineName })}
+                >
+                  {style.logo ? (
+                    <span className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)] p-1 overflow-hidden">
+                      <img src={style.logo} alt="" className="w-full h-full object-contain" />
+                    </span>
+                  ) : (
+                    <span
+                      className="w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold text-white shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                      style={{ background: style.color }}
+                    >
+                      {style.initials}
+                    </span>
+                  )}
+                  <span className="flex flex-col gap-0.5">
+                    <strong className="text-[10px] font-semibold">{chaineName}</strong>
+                    <small className="text-[8px] text-[#6e8186] whitespace-nowrap">{count} ressource(s)</small>
+                  </span>
+                </button>
+              );
+            })}
 
             <div className="mesh-center-label">
               <span className="text-[7px] font-bold tracking-[0.18em] text-[#78919b]">RESSOURCES SUIVIES</span>
@@ -282,6 +367,137 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </span>
               <ArrowRight className="w-3.5 h-3.5 text-[#58686f] group-hover:text-violet group-hover:translate-x-0.5 transition-all shrink-0 mt-0.5" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Qui peut être mobilisé + Disponibilité par chaîne */}
+      <section className="grid grid-cols-1 lg:grid-cols-[1.65fr_0.85fr] gap-3.5">
+        <div className="rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#101e1e]/70 to-[#090f13]/80 p-5">
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <div className="flex items-center gap-2 text-[9px] font-bold tracking-[0.12em] uppercase text-[#6e7c84]">
+              <UserCheck className="w-3.5 h-3.5 text-lime" /> Ressources en temps réel
+            </div>
+            <button
+              onClick={() => onNavigateToRecherche()}
+              className="inline-flex items-center gap-1 text-[10px] text-[#8e9da1] hover:text-lime transition-colors"
+            >
+              Voir la liste <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+          <h2 className="mb-4 text-[15px] font-medium tracking-tight text-[#dfe9e8]">
+            Qui peut être mobilisé <em className="text-lime not-italic">là, maintenant ?</em>
+          </h2>
+
+          {mobilisables === null ? (
+            <div className="py-8 text-center text-xs text-[#6e7c84]">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-lime mx-auto mb-2"></div>
+              Vérification de la disponibilité en cours…
+            </div>
+          ) : apercuMobilisables.length === 0 ? (
+            <p className="text-xs text-[#6e7c84] italic">Aucune ressource trouvée.</p>
+          ) : (
+            <div className="overflow-x-auto -mx-1">
+              <table className="w-full text-left border-collapse min-w-[520px]">
+                <thead>
+                  <tr className="text-[9px] font-bold uppercase tracking-wider text-[#5f6d75] border-b border-white/[0.07]">
+                    <th className="py-2 px-1 font-bold">Ressource</th>
+                    <th className="py-2 px-1 font-bold">Chaîne · Direction</th>
+                    <th className="py-2 px-1 font-bold">Statut</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.05]">
+                  {apercuMobilisables.map(({ ressource, etat }) => {
+                    const initials = `${ressource.prenom.charAt(0)}${ressource.nom.charAt(0)}`.toUpperCase();
+                    const isDispo = etat === 'Disponible';
+                    return (
+                      <tr
+                        key={ressource.id}
+                        className="hover:bg-white/[0.025] transition-colors cursor-pointer"
+                        onClick={() => onSelectResource?.(ressource)}
+                      >
+                        <td className="py-2.5 px-1">
+                          <div className="flex items-center gap-2.5">
+                            <span
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 ${
+                                isDispo ? 'bg-lime/15 text-lime border border-lime/30' : 'bg-cyan/15 text-cyan border border-cyan/30'
+                              }`}
+                            >
+                              {initials}
+                            </span>
+                            <div className="min-w-0">
+                              <div className="text-xs font-semibold text-[#eef3f4] truncate">
+                                {ressource.prenom} {ressource.nom}
+                              </div>
+                              <div className="text-[10px] text-[#6e7c84] truncate">{ressource.fonction}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-1 text-[11px]">
+                          <div className="font-semibold text-[#c1cdcf]">
+                            <ChannelBadge name={ressource.chaineRattachement} />
+                          </div>
+                          <div className="text-[10px] text-[#6e7c84] truncate max-w-[140px]">{ressource.direction}</div>
+                        </td>
+                        <td className="py-2.5 px-1">
+                          <span
+                            className={`inline-flex items-center gap-1.5 text-[10px] font-semibold ${
+                              isDispo ? 'text-lime' : 'text-cyan'
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${isDispo ? 'bg-lime' : 'bg-cyan'}`} />
+                            {isDispo ? 'Disponible' : 'Affectée'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-white/[0.09] bg-gradient-to-br from-[#101e1e]/70 to-[#090f13]/80 p-5">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2 text-[9px] font-bold tracking-[0.12em] uppercase text-[#6e7c84]">
+              Couverture des chaînes
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-[9px] text-lime">
+              <span className="w-1 h-1 rounded-full bg-lime shadow-[0_0_8px_theme(colors.lime)]" />
+              {chainesDisponibilite.length} suivies
+            </span>
+          </div>
+          <h2 className="mb-4 text-[15px] font-medium tracking-tight text-[#dfe9e8]">
+            Disponibilité par chaîne
+          </h2>
+
+          <div className="space-y-3">
+            {chainesDisponibilite.map(({ chaine, pct }) => (
+              <button
+                key={chaine}
+                onClick={() => onNavigateToRecherche({ chaine })}
+                className="w-full text-left group"
+              >
+                <div className="flex items-center justify-between text-[11px] mb-1">
+                  <span className="font-medium text-[#c1cdcf] group-hover:text-lime transition-colors">
+                    <ChannelBadge name={chaine} />
+                  </span>
+                  <span className="font-semibold text-[#9ba9ab]">{pct}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan to-lime transition-all"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.07] text-[10px] text-[#6e7c84]">
+            <span>Ressources suivies</span>
+            <strong className="text-[#c1cdcf]">{totalRessources}</strong>
           </div>
         </div>
       </section>

@@ -14,6 +14,7 @@ import { CHAINES_LIST, FONCTIONS_LIST } from '../data/constants';
 import { FunctionSettingsModal } from './FunctionSettingsModal';
 import { SearchableSelect } from './SearchableSelect';
 import { getTodayStr, getDateStrPlusDays } from '../../shared/utils/dateHelpers';
+import { ChannelBadge } from './ChannelBadge';
 import { useAuth } from '../context/AuthContext';
 
 interface CalendarViewProps {
@@ -369,7 +370,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                           <span>{res.fonction}</span>
                           <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
-                            {res.chaineRattachement}
+                            <ChannelBadge name={res.chaineRattachement} />
                           </span>
                         </div>
                       </td>
@@ -451,8 +452,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <div className="font-bold text-sm text-[#eef3f4] hover:text-lime transition-colors truncate">
                         {res.prenom} {res.nom}
                       </div>
-                      <div className="text-[11px] text-[#6e7c84] truncate">
-                        {res.fonction} · {res.chaineRattachement}
+                      <div className="text-[11px] text-[#6e7c84] truncate flex items-center gap-1">
+                        {res.fonction} · <ChannelBadge name={res.chaineRattachement} />
                       </div>
                     </button>
                     {isFree ? (
@@ -651,7 +652,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                           <span>{res.fonction}</span>
                           <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
-                            {res.chaineRattachement}
+                            <ChannelBadge name={res.chaineRattachement} />
                           </span>
                         </div>
                       </td>

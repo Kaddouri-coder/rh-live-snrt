@@ -56,7 +56,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <img src="/logo-snrt-full.png" alt="SNRT" className="h-16 sm:h-20 object-contain" />
         </div>
 
-        <div className="w-full max-w-md mt-20">
+        <div className="w-full max-w-lg mt-20">
           <div className="rounded-2xl border border-white/[0.09] bg-[#0a1014]/85 backdrop-blur-md p-9 sm:p-11 shadow-[0_0_60px_rgba(0,0,0,0.4)]">
             <div className="flex items-center gap-2 mb-5">
               <span className="w-[18px] h-px bg-lime shadow-[0_0_8px_rgba(183,255,74,0.55)]" />
@@ -132,10 +132,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             </form>
           </div>
 
-          <div className="h-1 w-full flex rounded-full overflow-hidden mt-6 opacity-70">
-            <div className="flex-1 bg-cyan" />
-            <div className="flex-1 bg-lime" />
-            <div className="flex-1 bg-violet" />
+          <div className="h-1 w-full flex rounded-full overflow-hidden mt-6 opacity-90">
+            <div className="flex-1" style={{ background: '#00549e' }} />
+            <div className="flex-1" style={{ background: '#d42b35' }} />
+            <div className="flex-1" style={{ background: '#de6b07' }} />
+            <div className="flex-1" style={{ background: '#00782b' }} />
           </div>
         </div>
       </div>
