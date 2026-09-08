@@ -4,6 +4,8 @@ Application web de **consultation en temps réel de la disponibilité des ressou
 
 RH Live n'est **pas** un outil de planification — c'est un système de **consultation** : il affiche, filtre et met à jour en temps réel les données de disponibilité (ressources, affectations), sans les gérer lui-même.
 
+Identité visuelle **Neon Human Mesh** : thème sombre, accents lime/cyan/violet, constellation animée en fond représentant le flux des ressources humaines à travers les chaînes SNRT.
+
 ---
 
 ## ✨ Fonctionnalités
@@ -11,7 +13,12 @@ RH Live n'est **pas** un outil de planification — c'est un système de **consu
 - 🔐 **Authentification sécurisée** — JWT + bcrypt, gestion des rôles (Administrateur / Consultant)
 - 👤 **Administration** — CRUD complet des comptes utilisateurs, recherche, validation email/mot de passe fort
 - 🔎 **Recherche de disponibilité** — filtres multiples (chaîne, direction, fonction, période, nom), détection automatique des conflits de planning
-- 📅 **Vue calendrier** — 4 modes (Journée / Semaine / Mois / Période personnalisée)
+- 📅 **Vue calendrier** — 4 modes (Journée / Semaine / Mois / Période personnalisée), agenda vertical dédié sur mobile
+- 📊 **Tableau de bord temps réel** :
+  - *Availability mesh* — vue d'ensemble des ressources par chaîne (logos réels quand disponibles)
+  - *Qui peut être mobilisé, là, maintenant ?* — vérification de disponibilité en temps réel (fenêtre glissante de 2h)
+  - *Disponibilité par chaîne* — taux réel de ressources libres, chaîne par chaîne
+- 🖼️ **Logos de chaînes** — badge réutilisable (`ChannelBadge`) affichant le vrai logo quand disponible, sinon des initiales colorées
 - 📄 **Export PDF** — génération d'un rapport de disponibilité imprimable
 - ⚡ **Temps réel** — mises à jour automatiques via WebSocket, y compris pour les changements faits directement en base (PostgreSQL `LISTEN`/`NOTIFY`)
 - 📱 **Responsive** — utilisable sur mobile, tablette et desktop
@@ -22,25 +29,24 @@ RH Live n'est **pas** un outil de planification — c'est un système de **consu
 
 | Couche | Technologies |
 |---|---|
-| **Frontend** | React 19, TypeScript, Tailwind CSS v4, Vite |
+| **Frontend** | React 19, TypeScript, Tailwind CSS v4 (thème CSS-first, tokens `lime`/`cyan`/`violet`), Vite |
+| **Polices** | Space Grotesk (titres), DM Sans (texte) |
 | **Backend** | Node.js, Express, TypeScript |
 | **Base de données** | PostgreSQL |
 | **Temps réel** | WebSocket (`ws`), PostgreSQL `LISTEN`/`NOTIFY` |
 | **Authentification** | JWT (`jsonwebtoken`), `bcryptjs` |
-| **3D** (décoratif) | Three.js |
+| **Fond animé** | Canvas 2D natif (particules + parallax souris) — aucune dépendance 3D/WebGL |
 
 ### Architecture (résumé)
-
-```
-Frontend (React)  ->  services/api.ts  ->  Backend (Express, /api)  ->  Models  ->  PostgreSQL
-                                              |
-                                        WebSocket (ws) <-- broadcast() <-- dbListener.ts (LISTEN/NOTIFY)
-```
+Frontend (React) -> services/api.ts -> Backend (Express, /api) -> Models -> PostgreSQL
+|
+WebSocket (ws) <-- broadcast() <-- dbListener.ts (LISTEN/NOTIFY)
 
 - **`frontend/services/api.ts`** centralise tous les appels réseau vers le backend.
 - **`frontend/context/AuthContext.tsx`** gère l'utilisateur connecté et le token de façon globale (React Context).
 - **`backend/controllers/`** puis **`backend/models/`** : chaque route API délègue sa logique métier au controller correspondant, qui est le seul à interroger la base via son model.
 - **`backend/websocket.ts`** + **`backend/dbListener.ts`** : toute écriture en base (via l'API *ou* directement en SQL) déclenche une notification poussée à tous les clients connectés.
+- **`frontend/data/channelStyles.ts`** + **`frontend/components/ChannelBadge.tsx`** : association nom de chaîne → logo réel (`public/logos-chaines/`) ou badge coloré de repli.
 
 ---
 
@@ -190,37 +196,60 @@ L'application est accessible sur **http://localhost:3000**.
 | `npm run build` | Compile le frontend et le backend pour la production |
 | `npm start` | Démarre l'application compilée (après `npm run build`) |
 | `npm run lint` | Vérifie le typage TypeScript sans compiler (`tsc --noEmit`) |
+| `npm run test` | Exécute les tests unitaires (Vitest) |
 | `npm run clean` | Supprime les fichiers de build |
 
 ---
 
 ## 📁 Structure du projet
-
-```
 ├── backend/
-│   ├── controllers/        Logique métier de chaque route (validation, appel aux models)
-│   ├── models/              Seule couche autorisée à exécuter des requêtes SQL
-│   ├── middleware/           authMiddleware.ts (vérification JWT, rôles)
-│   ├── routes/                apiRouter.ts — liste des routes /api/*
-│   ├── db.ts                   Pool de connexion PostgreSQL
-│   ├── websocket.ts             Serveur WebSocket + fonction broadcast()
-│   └── dbListener.ts             Écoute PostgreSQL LISTEN/NOTIFY
+│ ├── controllers/ Logique métier de chaque route (validation, appel aux models)
+│ ├── models/ Seule couche autorisée à exécuter des requêtes SQL
+│ ├── middleware/ authMiddleware.ts (vérification JWT, rôles)
+│ ├── routes/ apiRouter.ts — liste des routes /api/*
+│ ├── db.ts Pool de connexion PostgreSQL
+│ ├── websocket.ts Serveur WebSocket + fonction broadcast()
+│ └── dbListener.ts Écoute PostgreSQL LISTEN/NOTIFY
 │
 ├── frontend/
-│   ├── components/          Composants React (Sidebar, Dashboard, CalendarView, etc.)
-│   ├── context/               AuthContext.tsx — utilisateur connecté partagé globalement
-│   ├── services/                api.ts — tous les appels réseau centralisés
-│   ├── data/                     Constantes (listes de chaînes, directions, fonctions)
-│   ├── App.tsx                    Composant racine
-│   └── main.tsx                    Point d'entrée
+│ ├── components/
+│ │ ├── SNRTBackground.tsx Fond animé plein écran (Canvas 2D + logos de chaînes)
+│ │ ├── ChannelBadge.tsx Badge réutilisable : logo réel ou initiales colorées
+│ │ ├── Sidebar.tsx, Dashboard.tsx, CalendarView.tsx, ResourceList.tsx, ...
+│ │ └── ... (modals, AdminPanel, LoginPage, etc.)
+│ ├── context/ AuthContext.tsx — utilisateur connecté partagé globalement
+│ ├── services/ api.ts — tous les appels réseau centralisés
+│ ├── data/
+│ │ ├── constants.ts Listes de chaînes, directions, fonctions
+│ │ └── channelStyles.ts Association chaîne → logo réel / couleur de repli
+│ ├── App.tsx Composant racine
+│ └── main.tsx Point d'entrée
 │
 ├── shared/
-│   └── types.ts              Interfaces TypeScript partagées frontend/backend
+│ └── types.ts Interfaces TypeScript partagées frontend/backend
 │
-├── public/                  Assets statiques (logos, images)
-├── server.ts                 Point d'entrée du serveur (Express + Vite + WebSocket)
-└── .env.example                Modèle des variables d'environnement
-```
+├── public/
+│ ├── logos-chaines/ Logos réels des chaînes SNRT (PNG/WebP)
+│ ├── sahara-human-flow.webp Fond du panneau de connexion
+│ └── mesh-network-bg.png Fond du panneau "Availability mesh" (Dashboard)
+│
+├── server.ts Point d'entrée du serveur (Express + Vite + WebSocket)
+└── .env.example Modèle des variables d'environnement
+
+---
+
+## 🎨 Identité visuelle — Neon Human Mesh
+
+| Élément | Valeur |
+|---|---|
+| Fond | `#05080b` (quasi noir, teinté bleu pétrole) |
+| Couleur signature | Lime `#b7ff4a` |
+| Accent secondaire | Cyan `#58d5ff` |
+| Accent tertiaire | Violet `#a58cff` |
+| Police titres | Space Grotesk |
+| Police texte | DM Sans |
+
+Le thème est **sombre en permanence** (pas de bascule clair/sombre) ; seule la page de connexion et le fond d'ambiance (`SNRTBackground`) sont visibles avant authentification.
 
 ---
 
@@ -230,6 +259,7 @@ L'application est accessible sur **http://localhost:3000**.
 - Authentification par token JWT (expiration 8h), vérifiée sur toutes les routes protégées
 - Validation stricte des emails et de la robustesse des mots de passe (8 caractères min., majuscule, minuscule, chiffre, caractère spécial) côté client **et** serveur
 - Requêtes SQL paramétrées (protection contre les injections SQL)
+- Routes de modification/suppression des ressources et de configuration réservées au rôle `admin`
 
 ---
 
