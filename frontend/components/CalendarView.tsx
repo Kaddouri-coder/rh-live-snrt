@@ -299,7 +299,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 {c}
               </option>
             ))}
-                      </select>
+          </select>
 
           {isAdmin && (
             <button
@@ -330,10 +330,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         <>
           {/* Vue grille horaire — desktop/tablette (scroll horizontal acceptable ici) */}
           <div className="hidden md:block overflow-x-auto border border-white/[0.09] rounded-xl">
-            <table className="w-full text-left border-collapse min-w-[900px]">
+            <table className="w-full text-left border-collapse min-w-[950px]">
               <thead>
                 <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
-                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-52 sticky left-0 bg-[#0e1518] z-10">
+                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-64 sticky left-0 bg-[#0e1518] z-10">
                     Ressource Humaine
                   </th>
                   {hours.map((h) => (
@@ -504,10 +504,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           <div className="overflow-x-auto border border-white/[0.09] rounded-xl">
-            <table className="w-full text-left border-collapse min-w-[850px]">
+            <table className="w-full text-left border-collapse min-w-[900px]">
               <thead>
                 <tr className="bg-black/30 text-[#9aa5aa] text-xs font-semibold">
-                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-52 sticky left-0 bg-[#0e1518] z-10">
+                  <th className="py-2.5 px-3 border-b border-white/[0.08] w-64 sticky left-0 bg-[#0e1518] z-10">
                     Ressource Humaine
                   </th>
                   {weekDays.map((day) => {
@@ -540,8 +540,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                         <span>{res.fonction}</span>
                         <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
-                          {res.chaineRattachement}
-                        </span>
+                            <ChannelBadge name={res.chaineRattachement} />
+                          </span>
                       </div>
                     </td>
 
@@ -590,7 +590,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
         </div>
       )}
-            {modeVue === 'mois' && (
+
+      {modeVue === 'mois' && (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.03] p-3 rounded-lg border border-white/[0.08]">
             <h3 className="text-sm font-semibold text-[#eef3f4] capitalize flex items-center gap-2">
@@ -816,8 +817,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <div className="text-[10px] text-[#6e7c84] font-mono flex items-center justify-between mt-0.5">
                         <span>{res.fonction}</span>
                         <span className="bg-white/[0.05] text-[#8b98a0] px-1 rounded">
-                          {res.chaineRattachement}
-                        </span>
+                            <ChannelBadge name={res.chaineRattachement} />
+                          </span>
                       </div>
                     </td>
 
