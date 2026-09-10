@@ -114,4 +114,5 @@ Mots de passe hashés (bcryptjs), authentification JWT, validation stricte des e
 
 ## Licence
 
-Projet interne — Société Nationale de Radiodiffusion et de Télévision (SNRT).
+Projet de fin d'année (PFA - Proof of Concept) réalisé dans le cadre de mon stage à la SNRT. 
+*Note : Les données présentées dans cette application (noms, affectations, matricules) sont entièrement factices et générées uniquement à des fins de test et de démonstration technique.*
