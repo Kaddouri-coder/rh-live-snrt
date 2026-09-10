@@ -194,11 +194,11 @@ export default function App() {
   }) => {
     const newFiltres: FiltresRecherche = {
       ...filtres,
-      fonction: preset.fonction || filtres.fonction,
-      chaine: preset.chaine || filtres.chaine,
+      fonction: preset.fonction || 'Toutes les fonctions',
+      chaine: preset.chaine || 'Toutes les chaînes',
       dateDebut: preset.dateDebut ? preset.dateDebut : filtres.dateDebut,
       dateFin: preset.dateFin ? preset.dateFin : filtres.dateFin,
-      etat: preset.etat || filtres.etat,
+      etat: preset.etat || 'Tous',
     };
     setFiltres(newFiltres);
     setActiveTab('recherche');
